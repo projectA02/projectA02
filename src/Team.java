@@ -1,3 +1,4 @@
+
 import java.util.Random;
 
 public class Team {
@@ -44,6 +45,7 @@ public class Team {
                 yut = 5;
             printYut(yut);
         }
+
     }
 
     /**
