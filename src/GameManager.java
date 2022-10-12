@@ -1,6 +1,6 @@
 public class GameManager {
-    public Team teamA = new Team();
-    public Team teamB = new Team();
+    public Team teamA = new Team(1);
+    public Team teamB = new Team(2);
     private boolean turn; // True : A 팀, false : B 팀
 
     public void showMenu(){
