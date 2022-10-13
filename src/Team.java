@@ -28,12 +28,28 @@ public class Team {
      * https://keichee.tistory.com/312 -> ref
      */
     public void roll() {
-        int yut = 0;
-        int count = 10;
+        int yut;
+        Random random = new Random();
+        int num = random.nextInt(10000);
+        if (num < 625)
+            yut = 0;
+        else if (num < 625 + 1875)
+            yut = 1;
+        else if (num < 625 + 1875 + 3750)
+            yut = 2;
+        else if (num < 625 + 1875 + 3750 + 2500)
+            yut = 3;
+        else if (num < 625 + 1875 + 3750 + 2500 + 625)
+            yut = 4;
+        else
+            yut = 5;
+        printYut(yut);
+
+        /*int count = 10;
         for (int i = 0; i < count; i++) {
             Random random = new Random();
             int num = random.nextInt(10000);
-            //System.out.println(num + "\n");
+            System.out.println(num + "\n");
             if (num < 625)
                 yut = 0;
             else if (num < 625 + 1875)
@@ -47,7 +63,7 @@ public class Team {
             else
                 yut = 5;
             printYut(yut);
-        }
+        }*/
 
     }
 
@@ -55,12 +71,10 @@ public class Team {
      * 말들이 낫는지를 체크
      */
     public boolean checkIsEnd() {
-        boolean check = true;
         // 하나라도 false 존재 -> false;
-        for (int i = 0; i < 4; i++) {
-            if (isEnd[i] == false) check = false;
-        }
-        return check;
+        for (int i = 0; i < 4; i++)
+            if (!isEnd[i])  return false;
+        return true;
     }
 
     /**
@@ -84,10 +98,8 @@ public class Team {
                 groupB.add(horse[h2 - 'a']);
             }
         } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3
-            while (!groupB.isEmpty()) {
-                groupA.addAll(groupB);
-                groupB.clear();
-            }
+           groupA.addAll(groupB);
+           groupB.clear();
         } else {                                                                // case 2
             char g = Character.isUpperCase(h1) ? h1 : h2;
             char h = Character.isLowerCase(h1) ? h1 : h2;
