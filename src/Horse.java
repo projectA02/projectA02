@@ -1,12 +1,13 @@
 import java.util.*;
 public class Horse {
 
-    public Pair<Integer, Integer> position = new Pair<>(6, 6);
+    public Pair<Integer, Integer> position = new Pair<>(0, 0);
     public Stack<Pair<Integer, Integer>> historyStack = new Stack<Pair<Integer, Integer>>(); // 한칸,한칸 마다 기록
 
 
     // 백도
     // char[] mark = {'1', '2', '3', '4'};
+
 
     public boolean move(int toMove, char direction) {
 
@@ -25,6 +26,8 @@ public class Horse {
         int dx = 0; // 이동할 y축 방향 (-1, 0, 1)
         int x_pos; // x좌표
         int y_pos; // y좌표
+        Integer c_y = position.first;   // 현재위치 y좌표
+        Integer c_x = position.second;  // 현재위치 x좌표
 
         /*
         알고리즘 설명
@@ -33,13 +36,16 @@ public class Horse {
         3. 현재 위치에서 방향을 고려해서 나아감
          */
         while (toMove > 0) {    // 움직일 기회 0되면 종료
-            historyStack.push(position);    // 자취 등록
 
+
+            historyStack.push(new Pair<>(c_y, c_x));    // 자취 등록
+
+            // 현재 위치 int형으로 변환한 값
             y_pos = position.first.intValue();
             x_pos = position.second.intValue();
 
             // 출발 분기점. 일단 분기점이어서 따로 만듬.
-            if (y_pos == 6 && x_pos == 6) {
+            if ((y_pos == 6 && x_pos == 6) && historyStack.isEmpty() == true)  {
                 dy = -1;
             }
             // 말이 (0,6)에 있는 경우
@@ -156,6 +162,8 @@ public class Horse {
             dx = 0;     // dx 0으로 초기화
             dy = 0;     // dy 0으로 초기화
             direction = 'Z';    // 방향 없애주기 없는 방향은 Z로 함
+            c_y = position.first;
+            c_x = position.second;
         }
 
         return false;   // 말이 나지 않았으므로 false 반환
