@@ -36,17 +36,17 @@ public class Team {
         yut[yutNum]++;
     }
 
-    public void controller(String command ,char h ,char distance,char direction){//move
+    public void controller(String command ,char h ,int toMove,char direction){//move
         if(h =='A'){
             for(Horse horse1 : groupA){
-                horse1.move();
+                horse1.move(toMove, direction);
             }
         }else if(h =='B'){
             for(Horse horse2 : groupB){
-                horse2.move();
+                horse2.move(toMove,direction);
             }
         }else {
-            horse[h-'a'].move();
+            horse[h-'a'].move(toMove,direction);
         }
     }
 
