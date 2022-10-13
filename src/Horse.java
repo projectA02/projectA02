@@ -6,20 +6,19 @@ public class Horse {
 
 
     // 백도
-    // todo : mark unicode로 넣어주기
-    char[] mark = {'1', '2', '3', '4'};
+    // char[] mark = {'1', '2', '3', '4'};
 
-    public void move(int toMove, char direction) {
+    public boolean move(int toMove, char direction) {
 
         // 백도일때 처리
         if (toMove == 0) {
             if (historyStack.isEmpty()) {
                 // todo: historyStack이 비었을 때 채워줘야함.
 
-
             }
             position = historyStack.pop();
-            return; // move 종료
+            return false; // move 종료
+            // todo: 출발지로 돌아온다면 true를 반환해줘야함
         }
 
         int dy = 0; // 이동할 x축 방향 (-1, 0, 1)
@@ -92,10 +91,9 @@ public class Horse {
                 }
             }
 
-            // 말이 (6,6)에 있는 경우
+            // 말이 (6,6)에 있는 경우  // 해당말 끝
             else if (y_pos == 6 && x_pos == 6) {
-                // todo: 해당 말 끝
-                return;
+                return true;
             }
 
             // --------------여기서부터 분기점 아닌 칸들-------------
@@ -137,8 +135,7 @@ public class Horse {
             }
             //잘못된 칸에 들어가면 오류 발생
             else {
-                System.out.println("MOVE함수 오류 잘못들어왔습니다! 오류난 좌표" +"(" + position.first + ", " + position.second + ")" );
-                // todo: 잘못된 칸에 들어온 경우로 오류발생시켜줘야함.
+                System.out.println("MOVE함수 오류 잘못들어왔습니다! 오류난 좌표" + "(" + position.first + ", " + position.second + ")");
             }
 
             x_pos = x_pos + dx;
@@ -158,8 +155,9 @@ public class Horse {
             toMove--;   // 남은 이동횟수 차감
             dx = 0;     // dx 0으로 초기화
             dy = 0;     // dy 0으로 초기화
-            direction = 'A';    // 방향 없애주기 임의로 A로 함
+            direction = 'Z';    // 방향 없애주기 없는 방향은 Z로 함
         }
-    }
 
+        return false;   // 말이 나지 않았으므로 false 반환
+    }
 }
