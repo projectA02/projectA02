@@ -24,17 +24,63 @@ public class Team {
     }
 
     /**
+     * controller에서 받아올 command
+     * move -> move + 어떤말,이동거리,방향
+     * roll -> roll 실행
+     * grouping -> grouping + grouping할 말들
+     * overloading으로 controller 구현
+     * */
+    public void controller(String command){ // roll
+        int yutNum;
+        yutNum= roll();
+        yut[yutNum]++;
+    }
+
+    public void controller(String command ,char h ,char distance,char direction){//move
+        if(h =='A'){
+            for(Horse horse1 : groupA){
+                horse1.move();
+            }
+        }else if(h =='B'){
+            for(Horse horse2 : groupB){
+                horse2.move();
+            }
+        }else {
+            horse[h-'a'].move();
+        }
+    }
+
+    public void controller(String command, char horse1,char horse2){
+
+    }
+    /**
      * roll 이 하는 역할 : 윷 굴리기
      * todo : 윷 확률 결정해주기
      * https://keichee.tistory.com/312 -> ref
      */
-    public void roll() {
-        int yut = 0;
-        int count = 10;
+    public int roll() {
+        int yut;
+        Random random = new Random();
+        int num = random.nextInt(10000);
+        if (num < 625)
+            yut = 0;
+        else if (num < 625 + 1875)
+            yut = 1;
+        else if (num < 625 + 1875 + 3750)
+            yut = 2;
+        else if (num < 625 + 1875 + 3750 + 2500)
+            yut = 3;
+        else if (num < 625 + 1875 + 3750 + 2500 + 625)
+            yut = 4;
+        else
+            yut = 5;
+        printYut(yut);
+
+        /*int count = 10;
         for (int i = 0; i < count; i++) {
             Random random = new Random();
             int num = random.nextInt(10000);
-            //System.out.println(num + "\n");
+            System.out.println(num + "\n");
             if (num < 625)
                 yut = 0; // 백도
             else if (num < 625 + 1875)
@@ -48,18 +94,18 @@ public class Team {
             else
                 yut = 5; // 모
             printYut(yut);
-        }
+
+        }*/
+        return yut;
     }
     /**
      * 말들이 낫는지를 체크
      */
     public boolean checkIsEnd() {
-        boolean check = true;
         // 하나라도 false 존재 -> false;
-        for (int i = 0; i < 4; i++) {
-            if (isEnd[i] == false) check = false;
-        }
-        return check;
+        for (int i = 0; i < 4; i++)
+            if (!isEnd[i])  return false;
+        return true;
     }
 
     /**
@@ -85,10 +131,8 @@ public class Team {
                 groupB.add(horse[h2 - 'a']);
             }
         } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3
-            while (!groupB.isEmpty()) {
-                groupA.addAll(groupB);
-                groupB.clear();
-            }
+           groupA.addAll(groupB);
+           groupB.clear();
         } else {                                                                // case 2
             char g = Character.isUpperCase(h1) ? h1 : h2;
             char h = Character.isLowerCase(h1) ? h1 : h2;
