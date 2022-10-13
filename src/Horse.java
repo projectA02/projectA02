@@ -5,21 +5,42 @@ public class Horse {
     public Stack<Pair<Integer, Integer>> historyStack = new Stack<Pair<Integer, Integer>>(); // 한칸,한칸 마다 기록
 
 
-    // 백도
-    // char[] mark = {'1', '2', '3', '4'};
-
-
     public boolean move(int toMove, char direction) {
 
         // 백도일때 처리
         if (toMove == 0) {
+            // historyStack이 비어있을 때
             if (historyStack.isEmpty()) {
-                // todo: historyStack이 비었을 때 채워줘야함.
+                Integer i_x=6, j_y=6;
+
+                for(j_y=6; j_y >= 0; j_y--) {
+                    if(j_y==3)
+                        continue;
+                    historyStack.push(new Pair<>(i_x, j_y));
+                }
+                j_y=0;
+                for(i_x=5; i_x >= 0; i_x--) {
+                    if(i_x==3)
+                        continue;
+                    historyStack.push(new Pair<>(i_x, j_y));
+                }
+                i_x=0;
+                for(j_y=1; j_y<=6; j_y++) {
+                    if(j_y==3)
+                        continue;
+                    historyStack.push(new Pair<>(i_x, j_y));
+                }
+                j_y=6;
+                for(i_x=1; i_x<=6; i_x++) {
+                    if (i_x==3)
+                        continue;
+                    historyStack.push(new Pair<>(i_x, j_y));
+                }
 
             }
+
             position = historyStack.pop();
-            return false; // move 종료
-            // todo: 출발지로 돌아온다면 true를 반환해줘야함
+
         }
 
         int dy = 0; // 이동할 x축 방향 (-1, 0, 1)
