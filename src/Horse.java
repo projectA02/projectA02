@@ -3,6 +3,8 @@ public class Horse {
 
     public Pair<Integer, Integer> position = new Pair<>(6, 6);
     public Stack<Pair<Integer, Integer>> historyStack = new Stack<Pair<Integer, Integer>>(); // 한칸,한칸 마다 기록
+
+
     // 백도
     // todo : mark unicode로 넣어주기
     char[] mark = {'1', '2', '3', '4'};
@@ -13,16 +15,24 @@ public class Horse {
         if (toMove == 0) {
             if (historyStack.isEmpty()) {
                 // todo: historyStack이 비었을 때 채워줘야함.
+
+
             }
             position = historyStack.pop();
             return; // move 종료
         }
 
-        int dy = 0;
-        int dx = 0;
+        int dy = 0; // 이동할 x축 방향 (-1, 0, 1)
+        int dx = 0; // 이동할 y축 방향 (-1, 0, 1)
         int x_pos; // x좌표
         int y_pos; // y좌표
 
+        /*
+        알고리즘 설명
+        1. toMove
+        2. 분기점에서 출발한다면 방향을 고려해서 나아감
+        3. 현재 위치에서 방향을 고려해서 나아감
+         */
         while (toMove > 0) {    // 움직일 기회 0되면 종료
             historyStack.push(position);    // 자취 등록
 
@@ -60,11 +70,11 @@ public class Horse {
                 }
             }
             // 말이 (6,0)에 있는 경우
-            else if (y_pos == 0 && x_pos == 6) {
+            else if (y_pos == 6 && x_pos == 0) {
                 dx = 1;
             }
             // 말이 (3,3)에 있는 경우
-            else if (y_pos == 6 && x_pos == 0) {
+            else if (y_pos == 3 && x_pos == 3) {
                 if (direction == 'W') {
                     dy = 1;
                     dx = -1;
@@ -82,13 +92,19 @@ public class Horse {
                 }
             }
 
-            // --------------여기서부터 분기점 아닌 칸들---------
+            // 말이 (6,6)에 있는 경우
+            else if (y_pos == 6 && x_pos == 6) {
+                // todo: 해당 말 끝
+                return;
+            }
+
+            // --------------여기서부터 분기점 아닌 칸들-------------
             // 오른쪽 라인 분기점 제외 4개
             else if (x_pos == 6 && (1 <= y_pos && y_pos <= 5)) {
                 dy = -1;
             }
             // 왼쪽 라인 분기점 제외 4개
-            else if (x_pos == 1 && (1 <= y_pos && y_pos <= 5)) {
+            else if (x_pos == 0 && (1 <= y_pos && y_pos <= 5)) {
                 dy = 1;
             }
             // 위쪽 라인 분기점 제외 4개
@@ -121,7 +137,7 @@ public class Horse {
             }
             //잘못된 칸에 들어가면 오류 발생
             else {
-                return
+                System.out.println("MOVE함수 오류 잘못들어왔습니다! 오류난 좌표" +"(" + position.first + ", " + position.second + ")" );
                 // todo: 잘못된 칸에 들어온 경우로 오류발생시켜줘야함.
             }
 
@@ -134,16 +150,14 @@ public class Horse {
                 y_pos = y_pos + dy;
             }
 
-            // 도착지에 도착했을 경우
-            if (x_pos == 6 || y_pos == 6) {
-                // todo: 게임 끝
-                return;
-            }
-
             // 현재 위치 및 남은 이동횟수 업데이트
-            position.first = new Integer(y_pos);
-            position.second = new Integer(x_pos);
-            toMove--;
+            position.first = Integer.valueOf(y_pos);
+            position.second = Integer.valueOf(x_pos);
+
+            // 변수 초기화
+            toMove--;   // 남은 이동횟수 차감
+            dx = 0;     // dx 0으로 초기화
+            dy = 0;     // dy 0으로 초기화
             direction = 'A';    // 방향 없애주기 임의로 A로 함
         }
     }
