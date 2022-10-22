@@ -1,4 +1,5 @@
 import java.util.*;
+
 public class Horse {
     public Pair<Integer, Integer> position = new Pair<>(0, 0);
     public Stack<Pair<Integer, Integer>> historyStack = new Stack<Pair<Integer, Integer>>(); // 한칸,한칸 마다 기록
@@ -10,28 +11,28 @@ public class Horse {
         if (toMove == 0) {
             // historyStack이 비어있을 때
             if (historyStack.isEmpty()) {
-                Integer i_x=6, j_y=6;
+                Integer i_x = 6, j_y = 6;
 
-                for(j_y=6; j_y >= 0; j_y--) {
-                    if(j_y==3)
+                for (j_y = 6; j_y >= 0; j_y--) {
+                    if (j_y == 3)
                         continue;
                     historyStack.push(new Pair<>(i_x, j_y));
                 }
-                j_y=0;
-                for(i_x=5; i_x >= 0; i_x--) {
-                    if(i_x==3)
+                j_y = 0;
+                for (i_x = 5; i_x >= 0; i_x--) {
+                    if (i_x == 3)
                         continue;
                     historyStack.push(new Pair<>(i_x, j_y));
                 }
-                i_x=0;
-                for(j_y=1; j_y<=6; j_y++) {
-                    if(j_y==3)
+                i_x = 0;
+                for (j_y = 1; j_y <= 6; j_y++) {
+                    if (j_y == 3)
                         continue;
                     historyStack.push(new Pair<>(i_x, j_y));
                 }
-                j_y=6;
-                for(i_x=1; i_x<=6; i_x++) {
-                    if (i_x==3)
+                j_y = 6;
+                for (i_x = 1; i_x <= 6; i_x++) {
+                    if (i_x == 3)
                         continue;
                     historyStack.push(new Pair<>(i_x, j_y));
                 }
@@ -65,7 +66,7 @@ public class Horse {
             x_pos = position.second.intValue();
 
             // 출발 분기점. 일단 분기점이어서 따로 만듬.
-            if ((y_pos == 6 && x_pos == 6) && historyStack.isEmpty() == true)  {
+            if ((y_pos == 6 && x_pos == 6) && historyStack.isEmpty() == true) {
                 dy = -1;
             }
             // 말이 (0,6)에 있는 경우

@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -7,55 +8,121 @@ public class Team {
     public Set<Horse> groupA;// = new Horse[4];
     public Set<Horse> groupB;// = new Horse[4];
     public boolean[] isEnd;// = new boolean[4];
-    public int yut[] = new int[6]; // 백도,도,개,걸,윷,모
+    public char moved; // 직전에 움직인 말
+    public int[] yut = new int[6]; // 백도,도,개,걸,윷,모
     public int rollCnt; // roll 던질 수 있는 횟수
     public int teamNum; // 1 팀인지 2팀인지
     public boolean isTurnEnd;
+
     /**
      * todo : 생성자 작성
      */
     public Team(int teamNum) {
         this.horse = new Horse[4];
-        this.groupA = new HashSet<Horse>();
-        this.groupB = new HashSet<Horse>();
+        this.groupA = new HashSet<>();
+        this.groupB = new HashSet<>();
         this.isEnd = new boolean[4];
+        Arrays.fill(isEnd, false);
         this.rollCnt = 0;
         this.teamNum = teamNum;
     }
 
     /**
-     * controller에서 받아올 command
+     * controller 에서 받아올 command
      * move -> move + 어떤말,이동거리,방향
      * roll -> roll 실행
-     * grouping -> grouping + grouping할 말들
-     * overloading으로 controller 구현
-     * */
+     * grouping -> grouping + grouping 할 말들
+     * overloading 으로 controller 구현
+     */
 
-    public int controller(String command){ // roll
-        int yutNum;
-        yutNum= roll();
-        rollCnt--;
+    public int controller(String command) { // roll
+        int yutNum = roll();
         yut[yutNum]++;
         return yutNum;
     }
 
-    public void controller(String command ,char h ,int toMove,char direction){//move
-        if(h =='A'){
-            for(Horse horse1 : groupA){
+    public Pair<Integer,Integer> controller(String command, char h, int toMove, char direction) {//move
+        /**유효성 검사 통과 -> true , 불통 -> false ;
+         * 1. 'A' , 'B' 가 존재하는지?
+         * 2. 들어온 말이 이미 난 말인지?
+         * */
+        Pair<Integer,Integer> p = horse[h-'a'].position;
+        if (h == 'A') {
+            if (groupA.isEmpty()) {
+                return new Pair<>(-1,-1);
+            }
+            for (Horse horse1 : groupA) {
                 horse1.move(toMove, direction);
             }
-        }else if(h =='B'){
-            for(Horse horse2 : groupB){
-                horse2.move(toMove,direction);
+        } else if (h == 'B') {
+            if (groupB.isEmpty()) {
+                return new Pair<>(-1,-1);
             }
-        }else {
-            horse[h-'a'].move(toMove,direction);
+            for (Horse horse2 : groupB) {
+                horse2.move(toMove, direction);
+            }
+        } else {
+            if (isEnd[h - 'a']) {
+                return new Pair<>(-1,-1);
+            }
+            horse[h - 'a'].move(toMove, direction);
         }
+        moved = h;
+        return p;
     }
 
-    public void controller(String command, char horse1,char horse2){
-
+    public boolean controller(String command, char h1, char h2) {//grouping
+        /**
+         * 유효성 검사
+         * 1. 그룹이 비어있는가?
+         * 2. 그 턴에 움직인 말인지? && 안 움직인 말은 그 자리에 있는가?
+         * 3. 움직였다면 -> 둘다 위치 같은지?
+         * */
+        if (Character.isLowerCase(h1) && Character.isLowerCase(h2)) {           // case 1 말 + 말
+            if (moved == h1 || moved == h2) {
+                if (horse[h1 - 'a'].position == horse[h2 - 'a'].position) {
+                    grouping(h1, h2);
+                    return true;
+                }
+            }
+        } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3 그룹 + 그룹
+            if (moved == h1 || moved == h2) {
+                Pair<Integer, Integer> p1 = new Pair<>(-1, -1);
+                Pair<Integer, Integer> p2 = new Pair<>(-1, -1);
+                for (int i = 0; i < horse.length; i++) {
+                    if (groupA.contains(horse[i])) {
+                        p1 = horse[i].position;
+                    }
+                    if (groupB.contains(horse[i])) {
+                        p2 = horse[i].position;
+                    }
+                }
+                if (p1.first == -1 || p2.first == -1) return false; // group 이 비어 있는 경우
+                else if (p1 == p2) {
+                    grouping(h1, h2);
+                    return true;
+                }
+            }
+        } else {                                                                // case 2 그룹 + 말
+            char g = Character.isUpperCase(h1) ? h1 : h2;
+            char h = Character.isLowerCase(h1) ? h1 : h2;
+            if (moved == h1 || moved == h2) {
+                Pair<Integer, Integer> p = new Pair<>(-1, -1);
+                for (int i = 0; i < horse.length; i++) {
+                    if (g == 'A' ? groupA.contains(horse[i]) : groupB.contains(horse[i])) {
+                        p = horse[i].position;
+                    }
+                }
+                if (p.first == -1) return false; // group 이 비어 있는 경우
+                else if (p == horse[h - 'a'].position) {
+                    grouping(h1, h2);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
+
     /**
      * roll 이 하는 역할 : 윷 굴리기
      * todo : 윷 확률 결정해주기
@@ -73,10 +140,14 @@ public class Team {
             yut = 2;
         else if (num < 625 + 1875 + 3750 + 2500)
             yut = 3;
-        else if (num < 625 + 1875 + 3750 + 2500 + 625)
+        else if (num < 625 + 1875 + 3750 + 2500 + 625) {
             yut = 4;
-        else
+            rollCnt++;
+        } else {
             yut = 5;
+            rollCnt++;
+        }
+        rollCnt--;
         printYut(yut);
         /*int count = 10;
         for (int i = 0; i < count; i++) {
@@ -99,13 +170,14 @@ public class Team {
         }*/
         return yut;
     }
+
     /**
      * 말들이 낫는지를 체크
      */
     public boolean checkIsEnd() {
-        // 하나라도 false 존재 -> false;
-        for (int i = 0; i < 4; i++)
-            if (!isEnd[i])  return false;
+        // 하나라도 false 존재 -> 실패
+        for (int i = 0; i < horse.length; i++)
+            if (!isEnd[i]) return false;
         return true;
     }
 
@@ -114,7 +186,7 @@ public class Team {
      * 그룹핑 어떻게 할지
      */
     public void grouping(char h1, char h2) {
-        /** 명령어 검사(GameManager의 checkCommander) 에서
+        /** 명령어 검사(GameManager 의 checkCommander) 에서
          * @args_h1 : 그룹핑할 대상 1
          * @args_h2 : 그룹핑할 대상 2
          * @input_case
@@ -123,7 +195,7 @@ public class Team {
          * 3. 그룹 + 그룹 (둘 다 대문자)-> 그룹을 하나로 병합, 나머지 그룹은 초기화
          * @author : nnlnuu
          */
-        if (Character.isLowerCase(h1) && Character.isLowerCase(h2)) {           // case 1
+        if (Character.isLowerCase(h1) && Character.isLowerCase(h2)) {           // case 1 말 + 말
             if (groupA.isEmpty()) {
                 groupA.add(horse[h1 - 'a']);
                 groupA.add(horse[h2 - 'a']);
@@ -131,22 +203,24 @@ public class Team {
                 groupB.add(horse[h1 - 'a']);
                 groupB.add(horse[h2 - 'a']);
             }
-        } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3
+        } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3 그룹 + 그룹
             groupA.addAll(groupB);
             groupB.clear();
-        } else {                                                                // case 2
+        } else {                                                                // case 2 말 + 그룹
             char g = Character.isUpperCase(h1) ? h1 : h2;
             char h = Character.isLowerCase(h1) ? h1 : h2;
-            if (g == 'A')   groupA.add(horse[h - 'a']);
-            else            groupB.add(horse[h - 'a']);
+            if (g == 'A') groupA.add(horse[h - 'a']);
+            else groupB.add(horse[h - 'a']);
         }
     }
+
     //추가했습니다.
     public void printSrc() {
         System.out.println("\n<윷 현황>");
-        System.out.println("백도:"+ yut[0]+" 도:"+yut[1]+" 개:" +yut[2]+" 걸:"+yut[3]+" 윷:"+yut[4]+" 모:"+yut[5]);
+        System.out.println("백도:" + yut[0] + " 도:" + yut[1] + " 개:" + yut[2] + " 걸:" + yut[3] + " 윷:" + yut[4] + " 모:" + yut[5]);
         System.out.println("\n");
     }
+
     public void printYut(int yut) {
         switch (yut) {
             case 0: // 백도
