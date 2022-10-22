@@ -1,4 +1,3 @@
-
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -11,6 +10,7 @@ public class Team {
     public int yut[] = new int[6]; // 백도,도,개,걸,윷,모
     public int rollCnt; // roll 던질 수 있는 횟수
     public int teamNum; // 1 팀인지 2팀인지
+    public boolean isTurnEnd;
     /**
      * todo : 생성자 작성
      */
@@ -30,10 +30,13 @@ public class Team {
      * grouping -> grouping + grouping할 말들
      * overloading으로 controller 구현
      * */
-    public void controller(String command){ // roll
+
+    public int controller(String command){ // roll
         int yutNum;
         yutNum= roll();
+        rollCnt--;
         yut[yutNum]++;
+        return yutNum;
     }
 
     public void controller(String command ,char h ,int toMove,char direction){//move
@@ -75,7 +78,6 @@ public class Team {
         else
             yut = 5;
         printYut(yut);
-
         /*int count = 10;
         for (int i = 0; i < count; i++) {
             Random random = new Random();
@@ -94,7 +96,6 @@ public class Team {
             else
                 yut = 5; // 모
             printYut(yut);
-
         }*/
         return yut;
     }
@@ -121,7 +122,7 @@ public class Team {
          * 2. 말 + 그룹 / 그룹 + 말 (소문자, 대문자)-> 입력된 그룹에 말 추가
          * 3. 그룹 + 그룹 (둘 다 대문자)-> 그룹을 하나로 병합, 나머지 그룹은 초기화
          * @author : nnlnuu
-        */
+         */
         if (Character.isLowerCase(h1) && Character.isLowerCase(h2)) {           // case 1
             if (groupA.isEmpty()) {
                 groupA.add(horse[h1 - 'a']);
@@ -131,8 +132,8 @@ public class Team {
                 groupB.add(horse[h2 - 'a']);
             }
         } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3
-           groupA.addAll(groupB);
-           groupB.clear();
+            groupA.addAll(groupB);
+            groupB.clear();
         } else {                                                                // case 2
             char g = Character.isUpperCase(h1) ? h1 : h2;
             char h = Character.isLowerCase(h1) ? h1 : h2;
@@ -140,7 +141,12 @@ public class Team {
             else            groupB.add(horse[h - 'a']);
         }
     }
-
+    //추가했습니다.
+    public void printSrc() {
+        System.out.println("\n<윷 현황>");
+        System.out.println("백도:"+ yut[0]+" 도:"+yut[1]+" 개:" +yut[2]+" 걸:"+yut[3]+" 윷:"+yut[4]+" 모:"+yut[5]);
+        System.out.println("\n");
+    }
     public void printYut(int yut) {
         switch (yut) {
             case 0: // 백도
@@ -192,7 +198,6 @@ public class Team {
                         "└─┘ └─┘ └─┘ └─┘    ");
                 break;
         }
-
     }
 
 }
