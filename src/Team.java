@@ -219,9 +219,9 @@ public class Team {
 
     //추가했습니다.
     public void printSrc() {
-        System.out.println("\n<윷 현황>");
+        System.out.println("<윷 현황>");
         System.out.println("백도:" + yut[0] + " 도:" + yut[1] + " 개:" + yut[2] + " 걸:" + yut[3] + " 윷:" + yut[4] + " 모:" + yut[5]);
-        System.out.println("\n");
+       // System.out.println("\n");
     }
 
     public void printYut(int yut) {

@@ -66,7 +66,14 @@ public class GameManager {
                 drawMap();
                 teamTmp.printYut(tempYut);
                 teamTmp.printSrc();
-
+                System.out.println("팀 A 말 위치 현황");
+                for(int i = 0;i<4;i++){
+                    System.out.print(teamA.horse[i].position.first + " "+ teamA.horse[i].position.second + " ");
+                }
+                System.out.println("팀 B 말 위치 현황");
+                for(int i = 0;i<4;i++){
+                    System.out.print(teamB.horse[i].position.first + " "+ teamB.horse[i].position.second+ " ");
+                }
                 printCommand(turn, isCan);
                 System.out.print(">>>");
                 isCan = checkCommand(sc.nextLine(), teamTmp);
@@ -119,10 +126,10 @@ public class GameManager {
         }
         //ⓐⓑⓒⓓⒶⒷ○①②③④❶❷➌➍🅐 🅑 Ⓐ Ⓑ
         //todo 말 크기가 다름. 말 띄울 수 있게 변환
-        System.out.println("\n<말 대기현황>");
+        System.out.println("<말 대기현황>");
         System.out.println("A팀  a : ①  b : ②  c :  ③  d : ④ ");
         System.out.println("B팀  a : ❶  b : ❷  c :  ➌  d : ➍");
-        System.out.println("\n\n");
+        //System.out.println("\n\n");
     }
 
     /**
