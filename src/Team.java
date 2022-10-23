@@ -45,9 +45,9 @@ public class Team {
     }
 
     public Pair<Integer,Integer> controller(String command, char h, int toMove, char direction) {//move
-        /**유효성 검사 통과 -> true , 불통 -> false ;
-         * 1. 'A' , 'B' 가 존재하는지?
-         * 2. 들어온 말이 이미 난 말인지?
+        /** 유효성 검사 통과 -> true , 불통 -> false ;
+         *  1. 'A' , 'B' 가 존재하는지?
+         *  2. 들어온 말이 이미 난 말인지?
          * */
         Pair<Integer,Integer> p = horse[h-'a'].position;
         if (h == 'A') {

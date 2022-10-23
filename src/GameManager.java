@@ -10,15 +10,7 @@ public class GameManager {
     private boolean turn; // True : A 팀, false : B 팀
     boolean canGroup = false;
 
-    public int[][] board = {
-            { 0, 0, 0,-1, 0, 0, 0},
-            { 0, 0,-1,-1,-1, 0, 0},
-            { 0,-1, 0,-1, 0,-1, 0},
-            {-1,-1,-1, 0,-1,-1,-1},
-            { 0,-1, 0,-1, 0,-1, 0},
-            { 0, 0,-1,-1,-1, 0, 0},
-            { 0, 0, 0,-1, 0, 0, 0},
-    };
+    public int[][] board;
 
     GameManager() {
         boolean prog = true;
@@ -27,7 +19,7 @@ public class GameManager {
                 case "1": playGame(); break;
                 case "2": description(); break;
                 case "3": prog = false; break;
-                default: System.out.println("Input Command is Incorrect Only 1, 2, 3");
+                default: break;
             }
         }
         System.out.println("Good Bye!");
@@ -53,6 +45,16 @@ public class GameManager {
         turn = true;
         int isCan = 0;
 
+        board = new int[][]{
+                { 0, 0, 0,-1, 0, 0, 0},
+                { 0, 0,-1,-1,-1, 0, 0},
+                { 0,-1, 0,-1, 0,-1, 0},
+                {-1,-1,-1, 0,-1,-1,-1},
+                { 0,-1, 0,-1, 0,-1, 0},
+                { 0, 0,-1,-1,-1, 0, 0},
+                { 0, 0, 0,-1, 0, 0, 0},
+        };
+
         while (!isEnd) { //Turn이 바뀔 때 while문 투입
             Team teamTmp;
             if (turn) teamTmp = teamA;
@@ -72,7 +74,7 @@ public class GameManager {
                 // 해당 팀에게 갱신
                 if (turn) teamA = teamTmp;
                 else teamB = teamTmp;
-                // Turn End 확인
+                // Turn End 확인 todo 말이 없을 때 백도 나오면 종료해야함.
                 boolean canMove = false;
                 for (int i = 0; i < 6; i++) {
                     if (teamTmp.yut[i] != 0) canMove = true;
@@ -91,35 +93,36 @@ public class GameManager {
      */
     public void drawMap() {
         for (int i = 0; i < 20; i++) System.out.println();
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
+        for (int i = 6; i >= 0; i--) {
+            for (int j = 6; j >= 0; j--) {
                 switch (board[i][j]) {
                     //todo Fill Mark
                     //Used black in Unicode (sp => dif size)
-                    case -1: System.out.print("ㅤ "); break;
-                    case  0: System.out.print("○ "); break;
+                    case -1: System.out.print("  "); break;
+                    case  0: System.out.print("0 "); break;
                     //Team A
-                    case  1: System.out.print("ⓐ "); break;
-                    case  2: System.out.print("ⓑ "); break;
-                    case  3: System.out.print("ⓒ "); break;
-                    case  4: System.out.print("ⓓ "); break;
+                    case  1: System.out.print("① "); break;
+                    case  2: System.out.print("② "); break;
+                    case  3: System.out.print("③ "); break;
+                    case  4: System.out.print("④ "); break;
                     case  5: System.out.print("Ⓐ "); break;
                     case  6: System.out.print("Ⓑ "); break;
                     //Team B
-                    case 11: System.out.print("○ "); break;
-                    case 12: System.out.print("○ "); break;
-                    case 13: System.out.print("○ "); break;
-                    case 14: System.out.print("○ "); break;
-                    case 15: System.out.print("ㅤ "); break;
-                    case 16: System.out.print("○ "); break;
+                    case 11: System.out.print("❶ "); break;
+                    case 12: System.out.print("❷ "); break;
+                    case 13: System.out.print("➌ "); break;
+                    case 14: System.out.print("➍ "); break;
+                    case 15: System.out.print("\uD83C\uDD50 "); break;//🅐
+                    case 16: System.out.print("\uD83C\uDD51 "); break;//🅑
                 }
             }
             System.out.println();
         }
+        //ⓐⓑⓒⓓⒶⒷ○①②③④❶❷➌➍🅐 🅑 Ⓐ Ⓑ
         //todo 말 크기가 다름. 말 띄울 수 있게 변환
         System.out.println("\n<말 대기현황>");
-        System.out.println("A팀  a :  b :   c :  ③  d :  ");
-        System.out.println("B팀  a :  b :   c :  ➌  d :  ➍");
+        System.out.println("A팀  a : ①  b : ②  c :  ③  d : ④ ");
+        System.out.println("B팀  a : ❶  b : ❷  c :  ➌  d : ➍");
         System.out.println("\n\n");
     }
 
@@ -128,23 +131,28 @@ public class GameManager {
      */
     public int checkCommand(String str, Team tm) {
         String cmd[] = str.trim().split(" ");//양쪽 공백 날리고, 공백으로 명령어랑 인자 구분
-        for(int i=0; i<cmd.length; i++)
-            System.out.println(i + ":" + cmd[i]);
         switch (cmd[0].toLowerCase()) {//명령어 부분만 소문자로 변환
             case "move":
             case "m":
-                boolean canMove = false;
-                for (int i = 0; i < 6; i++) {
-                    if (tm.yut[i] != 0) canMove = true;
-                }
-                if (!canMove) return 1;
-
                 char h = cmd[1].charAt(0);
                 int toMove = Integer.parseInt(cmd[2]);
                 char direction = cmd[3].charAt(0);
+
+                if(tm.yut[toMove] <= 0) return 1;
+
+                /*todo 입력값 처리
+                if(cmd.length > 1) h = cmd[1].charAt(0);
+                if(cmd.length > 2) {
+                    toMove = Integer.parseInt(cmd[2]);
+                    if(tm.yut[toMove] <= 0) return 1;
+                }
+                if(cmd.length > 3) direction = cmd[3].charAt(0);
+                else direction = 'Q';
+                */
                 //기존 좌표 및 이동 가능여부
-                Pair<Integer, Integer> prev = tm.horse[h-'a'].position;
-                if(prev.first == -1 & prev.second == -1) return 1;
+                Pair<Integer, Integer> p = tm.horse[h-'a'].position;
+                Pair<Integer, Integer> prev = new Pair<>(p.first, p.second);
+                if(prev.first == -1 && prev.second == -1) return 1;
                 tm.controller(cmd[0], h, toMove, direction);
 
                 //이동 후 좌표
@@ -155,15 +163,21 @@ public class GameManager {
                 // 겹쳐지는가?
                 switch (checkHorse(turn, now_y, now_x)) {
                     case 1: canGroup = true; return 31; //아군
-                    case 2: kill(now_y, now_x); return 32; //적군
+                    case 2: kill(tm, now_y, now_x); break; //적군
                     default: break; //없을 때
                 }
-
                 //맵에 표시
                 switch (h) {
                     case 'a':
-                        if (turn) board[now_y][now_x] = 1;
-                        else board[now_y][now_x] = 11;
+                        if (turn) {
+                            board[now_y][now_x] = 1;
+                            System.out.println('a');
+                        }
+                        else {
+                            board[now_y][now_x] = 11;
+                            System.out.println('b');
+                        }
+                        System.out.println('c');
                         break;
                     case 'b':
                         if (turn) board[now_y][now_x] = 2;
@@ -214,11 +228,11 @@ public class GameManager {
      */
     public int checkHorse(boolean turn, int y, int x) {
         int now = board[y][x];
-        if(now == 1 | now == 2 | now == 3 | now == 4 | now == 5 | now == 6) {
+        if(now == 1 || now == 2 || now == 3 || now == 4 || now == 5 || now == 6) {
             if(turn) return 1;
             else return 2;
         }
-        else if(now == 11 | now == 12 | now == 13 | now == 14 | now == 15 | now == 16) {
+        else if(now == 11 || now == 12 || now == 13 || now == 14 || now == 15 || now == 16) {
             if(turn) return 2;
             else return 1;
         }
@@ -238,9 +252,8 @@ public class GameManager {
             default: System.out.println("Input Command is Incorrect"); break;
         }
     }
-    public void kill(int y, int x) {
+    public void kill(Team tm, int y, int x) {
         int now = board[y][x];
-        Iterator<Horse> iter;
         switch (now) {
             case 1:
             case 2:
@@ -264,7 +277,7 @@ public class GameManager {
                 teamB.groupB.clear();
                 break;
         }
-
+        tm.rollCnt++;
         board[y][x] = 0;
     }
     //todo 설명창 채우기
