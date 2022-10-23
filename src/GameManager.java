@@ -61,6 +61,8 @@ public class GameManager {
             else teamTmp = teamB;
             teamTmp.rollCnt = 100; // todo 수정 필요
             teamTmp.yut[0] = 10; // todo 수정 필요
+            teamTmp.yut[3] = 100; // todo 수정 필요
+            teamTmp.yut[5] = 100; // todo 수정 필요
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
