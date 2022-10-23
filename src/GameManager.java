@@ -283,7 +283,35 @@ public class GameManager {
             case "grouping":
             case "g":
                 if(!canGroup) return 3;
-                tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0));
+                char gCheck = tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0));
+                char h1 = cmd[1].charAt(0);
+                now_y = -1;
+                now_x = -1;
+                switch (gCheck) {
+                    case 'A':
+                        for (int i = 0; i < tm.horse.length; i++) {
+                            if (tm.groupA.contains(tm.horse[i])) {
+                                now_y = tm.horse[i].position.first;
+                                now_x = tm.horse[i].position.second;
+                            }
+                        }
+                        if (turn) board[now_y][now_x] = 5;
+                        else board[now_y][now_x] = 15;
+                        break;
+                    case 'B':
+                        for (int i = 0; i < tm.horse.length; i++) {
+                            if (tm.groupB.contains(tm.horse[i])) {
+                                now_y = tm.horse[i].position.first;
+                                now_x = tm.horse[i].position.second;
+                            }
+                        }
+                        if (turn) board[now_y][now_x] = 6;
+                        else board[now_y][now_x] = 16;
+                        break;
+                    case 'Z':
+                        System.out.println("Grouping Error: return Z");
+                        break;
+                }
                 break;
 
             //첫 단어가 올바른 명령어가 아닐 경우

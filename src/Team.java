@@ -114,10 +114,9 @@ public class Team {
                     }
                 }
                 if (p1.first.intValue() == -1 || p2.first.intValue() == -1) {
-                    System.out.println("잘못된 그룹핑입니다. ");
+                    System.out.print("p1.first.intValue() == -1 || p2.first.intValue() == -1: ");
                     return 'Z'; // group 이 비어 있는 경우: false의 의미로 Z를 반환합니다.
-                }
-                else if (p1 == p2) {
+                } else if (p1.first.intValue() == p2.first.intValue() && p1.second.intValue() == p2.second.intValue()) {
                     return grouping(h1, h2);
                 }
             }
@@ -132,16 +131,14 @@ public class Team {
                     }
                 }
                 if (p.first.intValue() == -1) {
-                    System.out.println("잘못된 그룹핑입니다. ");
+                    System.out.print("p.first.intValue() == -1: ");
                     return 'Z'; // false의 의미로 Z를 반환합니다.
-                }
-
-                else if (p == horse[h - 'a'].position) {
+                } else if (p.first.intValue() == horse[h - 'a'].position.first && p.second.intValue() == horse[h - 'a'].position.second) {
                     return grouping(h1, h2);
                 }
             }
         }
-        System.out.println("잘못된 그룹핑입니다.");
+        System.out.print("Not Grouped: ");
         return 'Z'; // false의 의미로 Z를 반환합니다.
     }
 
