@@ -21,7 +21,6 @@ public class testMain {
 
     public static void main(String[] args) throws IOException {
     GameManager gm = new GameManager();
-    gm.showMenu();
 
 //    System.out.println("도");
 //    System.out.println("" +

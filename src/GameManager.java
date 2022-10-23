@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.lang.String;
@@ -59,8 +60,9 @@ public class GameManager {
             Team teamTmp;
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
-            teamTmp.rollCnt = 1000; // todo 수정 필요
-           //teamTmp.yut[0] = 10; // todo 수정 필요
+            teamTmp.rollCnt = 0; // todo 수정 필요
+            //teamTmp.yut[5] = 100; // todo 수정 필요
+            teamTmp.yut[0] = 1;
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
@@ -69,17 +71,23 @@ public class GameManager {
                 teamTmp.printSrc();
                 System.out.println("팀 A 말 위치 현황");
                 for(int i = 0;i<4;i++){
-                    System.out.print(i+1+"번 말 :  ("+teamA.horse[i].position.first + " ,"+ teamA.horse[i].position.second + ") ");
+                    System.out.print(i+1+"번 말 : ("+teamA.horse[i].position.first + " ,"+ teamA.horse[i].position.second + ")");
                 }
                 System.out.println("\n팀 B 말 위치 현황");
                 for(int i = 0;i<4;i++){
-                    System.out.print(i+1+"번 말 :  ("+teamB.horse[i].position.first + " ,"+ teamB.horse[i].position.second+ ") ");
+                    System.out.print(i+1+"번 말 : ("+teamB.horse[i].position.first + " ,"+ teamB.horse[i].position.second+ ")");
                 }
                 System.out.println();
                 printCommand(turn, isCan);
                 System.out.print(">>>");
                 isCan = checkCommand(sc.nextLine(), teamTmp);
+                boolean res = true;
+                for(boolean check : teamTmp.isEnd) if(check == false) res = false;
 
+                if(res) {
+                    System.out.println("Press Enter! Back to Menu!");
+                    return;
+                }
                 // 해당 팀에게 갱신
                 if (turn) teamA = teamTmp;
                 else teamB = teamTmp;
@@ -279,6 +287,7 @@ public class GameManager {
                 switch (checkHorse(turn, now_y, now_x)) {
                     case 1: canGroup = true;
                         board[prev.first][prev.second] = 0;
+                        tm.yut[toMove]--;
                     return 31; //아군
                     case 2: kill(tm, now_y, now_x); break; //적군
                     default: break; //없을 때
@@ -428,8 +437,20 @@ public class GameManager {
 
     //todo 설명창 채우기
     public void description() {
-        System.out.println("설명창입니다. 여기를 채워주세요.");
+        System.out.println("게임은 A, B팀으로 진행된다. 각 팀 당 말 4개(a, b, c, d)를 가지고 있으며 이 말들이 모두 먼저 난 팀이 승리한다.\n" +
+                        "방위는 시작 점 기준으로 시작점은 S, 시작점의 대각선 위쪽은 N, 시작점의 위쪽은 E, 시작점의 오른쪽은 W이다.\n" +
+                        "윷가락 던지기,움직이기, 그룹핑 하기는 명령어로 입력되며 각 명령어의 형식은 아래와 같다.\n\n" +
+                        "던지기: roll 또는 r \n" +
+                        "움직이기: move 또는 m [말 또는 그룹] [이동 칸 수] [이동 방향] (ex. move a 3 N) \n" +
+                        "그룹핑: grouping 또는 g [말 또는 그룹] [말 또는 그룹] (ex. grouping a b) \n\n" +
+                        "윷가락의 결과는 도, 개, 걸, 윷, 모, 백도 가 가능하며 각각 한 칸, 두 칸, 세 칸, 네 칸, 다섯 칸, 뒤로 한칸 이동한다.\n" +
+                        "윷이나 모가 나오면 추가로 윷가락을 던질 수 있고, 이동 후 다른 팀의 말을 잡을 때도 한 번 더 던질 수 있다.\n" +
+                        "만약 첫 '도' 위치에서 백도가 나오면 결승점(시작점)으로 이동하고, 결승점(시작점)에서 백도가 한번 더 나올 경우" +
+                        "W방위 쪽으로 한 칸 이동한다.\n");
         System.out.println("Press Enter to Quit");
         sc.nextLine(); //Enter 입력을 기다림.
+    }
+    public static void main(String[] args) throws IOException {
+        GameManager gm = new GameManager();
     }
 }
