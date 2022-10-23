@@ -190,7 +190,7 @@ public class GameManager {
     public int checkCommand(String str, Team tm) {
         String cmd[] = str.trim().split("\\s+");//양쪽 공백 날리고, 가변적 공백으로 명령어랑 인자 구분
         if(cmd.length>4) return -1;//명령어, 인자 수 안맞을때
-        if(cmd.length == 0 && canGroup) {
+        if(cmd[0].length() == 0 && canGroup) {
             System.out.println("Chose not to group");
             canGroup = false;
             return 0;
