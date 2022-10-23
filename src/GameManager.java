@@ -59,8 +59,8 @@ public class GameManager {
             Team teamTmp;
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
-            teamTmp.rollCnt = 100; // todo 수정 필요
-            teamTmp.yut[0] = 10; // todo 수정 필요
+            teamTmp.rollCnt = 1; // todo 수정 필요
+           //teamTmp.yut[0] = 10; // todo 수정 필요
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
@@ -75,6 +75,7 @@ public class GameManager {
                 for(int i = 0;i<4;i++){
                     System.out.print(i+1+"번 말 :  ("+teamB.horse[i].position.first + " ,"+ teamB.horse[i].position.second+ ") ");
                 }
+                System.out.println();
                 printCommand(turn, isCan);
                 System.out.print(">>>");
                 isCan = checkCommand(sc.nextLine(), teamTmp);
@@ -129,8 +130,21 @@ public class GameManager {
         //ⓐⓑⓒⓓⒶⒷ○①②③④❶❷➌➍🅐 🅑 Ⓐ Ⓑ
         //todo 말 크기가 다름. 말 띄울 수 있게 변환
         System.out.println("<말 대기현황>");
-        System.out.println("A팀  a : ①  b : ②  c :  ③  d : ④ ");
-        System.out.println("B팀  a : ❶  b : ❷  c :  ➌  d : ➍");
+        System.out.print("A팀  ");
+        for(int i = 0; i < 4; i++){
+            System.out.print((char)('a'+i) + " : " );
+            if(!teamA.isEnd[i]) System.out.print((char)('①'+ i)+"  ");
+            else System.out.print("   ");
+        }
+        System.out.println("");
+
+        System.out.print("B팀  ");
+        for(int i = 0; i < 4; i++){
+            System.out.print((char)('a'+i) + " : " );
+            if(!teamB.isEnd[i]) System.out.print((char)('❶'+ i)+"  ");
+            else System.out.print("   ");
+        }
+        System.out.println("");
         //System.out.println("\n\n");
     }
 
@@ -151,23 +165,31 @@ public class GameManager {
                 }
                 else if(cmd[1].length()==3){//cmd[1]에 3글자
                     h=cmd[1].charAt(0);
-                    toMove = Character.getNumericValue(cmd[1].charAt(1));
+                    if(Character.isDigit(cmd[1].charAt(1)))
+                        toMove = Character.getNumericValue(cmd[1].charAt(1));
+                    else System.out.println("error: 이동 칸 수는 숫자");
                     direction = cmd[1].charAt(2);
                 }
                 else if(cmd[1].length()==2){//cmd[1]에 2글자
                     h=cmd[1].charAt(0);
-                    toMove = Character.getNumericValue(cmd[1].charAt(1));
+                    if(Character.isDigit(cmd[1].charAt(1)))
+                        toMove = Character.getNumericValue(cmd[1].charAt(1));
+                    else System.out.println("error: 이동 칸 수는 숫자");
                     direction = Character.toUpperCase(cmd[2].charAt(0));//이동시킬 방향
 
                 }
                 else if(cmd[1].length()==1){//cmd[1]에 1글자
                     h = cmd[1].charAt(0);//이동시킬 말
                     if(cmd[2].length()==2){//cmd[2]에 두글자
-                        toMove = Character.getNumericValue(cmd[2].charAt(0));
+                        if(Character.isDigit(cmd[2].charAt(0)))
+                            toMove = Character.getNumericValue(cmd[2].charAt(0));
+                        else System.out.println("error: 이동 칸 수는 숫자");
                         direction = Character.toUpperCase(cmd[2].charAt(1));//이동시킬 방향
                     }
                     else{//cmd 2에 1글자
-                        toMove = Character.getNumericValue(cmd[2].charAt(0));
+                        if(Character.isDigit(cmd[2].charAt(0)))
+                            toMove = Character.getNumericValue(cmd[2].charAt(0));
+                        else System.out.println("error: 이동 칸 수는 숫자");
                         direction = Character.toUpperCase(cmd[3].charAt(0));//이동시킬 방향
                     }
                 }

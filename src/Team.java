@@ -67,7 +67,7 @@ public class Team {
                 for (int i = 0; i < 4; i++){
                     if (horse[i] == horse1){
                         isEnd[i] = end;
-                        System.out.println(i+"번째 말이 낫습니다");
+                        System.out.println(i+"번째 말이 났습니다");
                     }
                 }
             }
@@ -85,7 +85,7 @@ public class Team {
                 for (int i = 0; i < 4; i++){
                     if (horse[i] == horse2){
                         isEnd[i] = end;
-                        System.out.println(i+"번째 말이 낫습니다");
+                        System.out.println(i+"번째 말이 났습니다");
                     }
                 }
             }
@@ -96,7 +96,7 @@ public class Team {
             }
             end = horse[h - 'a'].move(toMove, direction);
             isEnd[h - 'a'] = end;
-            System.out.println((h-'a')+"번째 말이 낫습니다");
+            if(end) System.out.println((h-'a')+"번째 말이 났습니다");
         }
         moved = h;
         return p;
