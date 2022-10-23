@@ -60,7 +60,7 @@ public class GameManager {
             Team teamTmp;
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
-           // teamTmp.rollCnt = 0; // todo 수정 필요
+            teamTmp.rollCnt = 1; // todo 수정 필요
            // teamTmp.yut[0] = 1;
            // teamTmp.yut[1]=2;// todo 수정 필요
            // teamTmp.yut[2] = 2;
@@ -363,7 +363,7 @@ public class GameManager {
                     return 1;
                 }
 
-                char gCheck = tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0)); // grouping 체크
+                char gCheck = tm.controller(cmd[0], h1, h2); // grouping 체크
 
                 now_y = -1;
                 now_x = -1;
