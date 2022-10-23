@@ -49,7 +49,8 @@ public class Team {
          *  1. 'A' , 'B' 가 존재하는지?
          *  2. 들어온 말이 이미 난 말인지?
          * */
-        System.out.println("move controller 실행");
+        System.out.println("move controller 실행"+toMove+" 이동");
+
         Pair<Integer,Integer> p = new Pair<>(-1,-1);
         if (h == 'A') {
             for (int i = 0; i < horse.length; i++) {
@@ -95,7 +96,8 @@ public class Team {
          * */
         if (Character.isLowerCase(h1) && Character.isLowerCase(h2)) {           // case 1 말 + 말
             if (moved == h1 || moved == h2) {
-                if (horse[h1 - 'a'].position == horse[h2 - 'a'].position) {
+                if ((horse[h1 - 'a'].position.first.intValue() == horse[h2 - 'a'].position.first.intValue())&&
+                        horse[h1 - 'a'].position.second.intValue() == horse[h2 - 'a'].position.second.intValue()) {
                     grouping(h1, h2);
                     return true;
                 }
@@ -112,7 +114,10 @@ public class Team {
                         p2 = horse[i].position;
                     }
                 }
-                if (p1.first == -1 || p2.first == -1) return false; // group 이 비어 있는 경우
+                if (p1.first.intValue() == -1 || p2.first.intValue() == -1) {
+                    System.out.println("잘못된 그룹핑입니다. ");
+                    return false; // group 이 비어 있는 경우
+                }
                 else if (p1 == p2) {
                     grouping(h1, h2);
                     return true;
@@ -128,13 +133,18 @@ public class Team {
                         p = horse[i].position;
                     }
                 }
-                if (p.first == -1) return false; // group 이 비어 있는 경우
+                if (p.first.intValue() == -1) {
+                    System.out.println("잘못된 그룹핑입니다. ");
+                    return false; // group 이 비어 있는 경우
+                }
+
                 else if (p == horse[h - 'a'].position) {
                     grouping(h1, h2);
                     return true;
                 }
             }
         }
+        System.out.println("잘못된 그룹핑입니다.");
         return false;
     }
 

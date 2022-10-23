@@ -6,7 +6,6 @@ public class Horse {
 
     public Horse(){
         this.position = new Pair<>(6, 6);
-
     }
 
     public boolean move(int toMove, char direction) {
@@ -14,6 +13,7 @@ public class Horse {
         // 백도일때 처리
         if (toMove == 0) {
             // historyStack이 비어있을 때
+            historyStack.pop();
             if (historyStack.isEmpty()) {
                 Integer i_x = 6, j_y = 6;
 
@@ -43,7 +43,8 @@ public class Horse {
 
             }
 
-            position = historyStack.pop();
+
+            position = historyStack.peek();
 
         }
 
@@ -62,15 +63,15 @@ public class Horse {
          */
         System.out.println("이동전 확인"); //todo 이후에 지우기
         while (toMove > 0) {    // 움직일 기회 0되면 종료
-            historyStack.push(new Pair<>(c_y, c_x));    // 자취 등록
 
             // 현재 위치 int형으로 변환한 값
             y_pos = position.first.intValue();
             x_pos = position.second.intValue();
-
+            System.out.println(y_pos+":"+x_pos);
             // 출발 분기점. 일단 분기점이어서 따로 만듬.
             if ((y_pos == 6 && x_pos == 6) && historyStack.isEmpty() == true) {
                 dy = -1;
+                System.out.println("지나가나??"); // todo 지우기
             }
             // 말이 (0,6)에 있는 경우
             else if (y_pos == 0 && x_pos == 6) {
@@ -123,7 +124,7 @@ public class Horse {
 
             // 말이 (6,6)에 있는 경우  // 해당말 끝
             else if (y_pos == 6 && x_pos == 6) {
-                return true;
+               // return true;
             }
 
             // --------------여기서부터 분기점 아닌 칸들-------------
@@ -137,7 +138,7 @@ public class Horse {
             }
             // 위쪽 라인 분기점 제외 4개
             else if (y_pos == 0 && (1 <= x_pos && x_pos <= 5)) {
-                dx -= -1;
+                dx = -1;
             }
             // 아래쪽 라인 분기점 제외 4개
             else if (y_pos == 6 && (1 <= x_pos && x_pos <= 5)) {
@@ -167,6 +168,7 @@ public class Horse {
             else {
                 System.out.println("MOVE함수 오류 잘못들어왔습니다! 오류난 좌표" + "(" + position.first + ", " + position.second + ")");
             }
+            historyStack.push(new Pair<>(c_y, c_x));    // 자취 등록
 
             x_pos = x_pos + dx;
             y_pos = y_pos + dy;

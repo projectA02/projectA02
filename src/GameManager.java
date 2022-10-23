@@ -60,6 +60,7 @@ public class GameManager {
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
             teamTmp.rollCnt = 100; // todo 수정 필요
+            teamTmp.yut[0] = 10; // todo 수정 필요
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
@@ -103,9 +104,10 @@ public class GameManager {
         for (int i = 0; i <= 6; i++) {
             for (int j = 0; j <= 6; j++) {
                 switch (board[i][j]) {
+
                     //Used black in Unicode (sp => dif size)
-                    case -1: System.out.print("  "); break;
-                    case  0: System.out.print("O "); break;
+                    case -1: System.out.print("ㅤ "); break;
+                    case  0: System.out.print("○ "); break;
                     //Team A
                     case  1: System.out.print("① "); break;
                     case  2: System.out.print("② "); break;
@@ -173,7 +175,7 @@ public class GameManager {
                     System.out.println("error: 인자 입력 필요");
                 }
                 /*명령어 오류 걸러내기*/
-                if ((h < 1 && h > 6) || (h < 11 && h > 16)) {
+                if ((h < 'a' || h > 'd') && (h < 'A' || h > 'B')) {
                     System.out.println("error: 가능한 말이 아님");
                     return 1;
                 }//말 번호가 아닐 때
@@ -186,13 +188,43 @@ public class GameManager {
                     return 1;
                 }
                 //기존 좌표 및 이동 가능여부
-                Pair<Integer, Integer> p = tm.horse[h-'a'].position;
+                Pair<Integer, Integer> p = new Pair<>(-1, -1);;
+                if(h == 'A'){
+                    for (int i = 0; i < tm.horse.length; i++) {
+                        if (tm.groupA.contains(tm.horse[i])) {
+                            p = tm.horse[i].position;
+                        }
+                    }
+                }else if (h == 'B'){
+                    for (int i = 0; i < tm.horse.length; i++) {
+                        if (tm.groupB.contains(tm.horse[i])) {
+                            p = tm.horse[i].position;
+                        }
+                    }
+                }else{
+                    p = tm.horse[h-'a'].position;
+                }
                 Pair<Integer, Integer> prev = new Pair<>(p.first, p.second);
                 if(prev.first == -1 && prev.second == -1) return 1;
                 tm.controller(cmd[0], h, toMove, direction);
 
                 //이동 후 좌표
-                Pair<Integer, Integer> cur = tm.horse[h-'a'].position;
+                Pair<Integer, Integer> cur = new Pair<>(-1, -1);;
+                if(h == 'A'){
+                    for (int i = 0; i < tm.horse.length; i++) {
+                        if (tm.groupA.contains(tm.horse[i])) {
+                            cur = tm.horse[i].position;
+                        }
+                    }
+                }else if (h == 'B'){
+                    for (int i = 0; i < tm.horse.length; i++) {
+                        if (tm.groupB.contains(tm.horse[i])) {
+                            cur = tm.horse[i].position;
+                        }
+                    }
+                }else{
+                    cur = tm.horse[h-'a'].position;
+                }
                 int now_y = cur.first;
                 int now_x = cur.second;
 
