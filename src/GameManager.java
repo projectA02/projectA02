@@ -69,9 +69,9 @@ public class GameManager {
             else teamTmp = teamB;
             teamTmp.rollCnt = 0; // todo 수정 필요
             //teamTmp.yut[5] = 1;
+            teamTmp.yut[0] = 1;
             teamTmp.yut[1] = 3;// todo 수정 필요
             teamTmp.yut[2] = 2;
-            //teamTmp.yut[1] = 2;
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
@@ -238,30 +238,45 @@ public class GameManager {
                 char direction = 'A';
                 if (cmd[1].length() > 3) {
                     System.out.println("error: 명령어 오류");
+                    return 1;
                 } else if (cmd[1].length() == 3) {//cmd[1]에 3글자
                     h = cmd[1].charAt(0);
                     if (Character.isDigit(cmd[1].charAt(1)))
                         toMove = Character.getNumericValue(cmd[1].charAt(1));
-                    else System.out.println("error: 이동 칸 수는 숫자");
+                    else {
+                        System.out.println("error: 이동 칸 수는 숫자");
+                        return 1;
+                    }
                     direction = cmd[1].charAt(2);
                 } else if (cmd[1].length() == 2) {//cmd[1]에 2글자
                     h = cmd[1].charAt(0);
                     if (Character.isDigit(cmd[1].charAt(1)))
                         toMove = Character.getNumericValue(cmd[1].charAt(1));
-                    else System.out.println("error: 이동 칸 수는 숫자");
-                    direction = Character.toUpperCase(cmd[2].charAt(0));//이동시킬 방향
-
+                    else {
+                        System.out.println("error: 이동 칸 수는 숫자");
+                        return 1;
+                    }
+                    if (cmd.length == 3)
+                        direction = Character.toUpperCase(cmd[2].charAt(0));//이동시킬 방향
+                    else
+                        direction = 'Z';
                 } else if (cmd[1].length() == 1) {//cmd[1]에 1글자
                     h = cmd[1].charAt(0);//이동시킬 말
                     if (cmd[2].length() == 2) {//cmd[2]에 두글자
                         if (Character.isDigit(cmd[2].charAt(0)))
                             toMove = Character.getNumericValue(cmd[2].charAt(0));
-                        else System.out.println("error: 이동 칸 수는 숫자");
+                        else {
+                            System.out.println("error: 이동 칸 수는 숫자");
+                            return 1;
+                        }
                         direction = Character.toUpperCase(cmd[2].charAt(1));//이동시킬 방향
                     } else {//cmd 2에 1글자
                         if (Character.isDigit(cmd[2].charAt(0)))
                             toMove = Character.getNumericValue(cmd[2].charAt(0));
-                        else System.out.println("error: 이동 칸 수는 숫자");
+                        else {
+                            System.out.println("error: 이동 칸 수는 숫자");
+                            return 1;
+                        }
                         if (cmd.length <= 3) direction = 'Z';
                         else direction = Character.toUpperCase(cmd[3].charAt(0));//이동시킬 방향
                     }
@@ -302,7 +317,7 @@ public class GameManager {
                 }
                 Pair<Integer, Integer> prev = new Pair<>(p.first, p.second);
                 if (prev.first == -1 && prev.second == -1) return 1;
-                tm.controller(cmd[0], h, toMove, direction);
+                boolean isMoved = tm.controller(cmd[0], h, toMove, direction);
 
                 //이동 후 좌표
                 Pair<Integer, Integer> cur = new Pair<>(-1, -1);
@@ -338,53 +353,57 @@ public class GameManager {
                     default:
                         break; //없을 때
                 }
-                //맵에 표시
-                switch (h) {
-                    case 'a':
-                        if (turn) board[now_y][now_x] = 1;
-                        else board[now_y][now_x] = 11;
-                        break;
-                    case 'b':
-                        if (turn) board[now_y][now_x] = 2;
-                        else board[now_y][now_x] = 12;
-                        break;
-                    case 'c':
-                        if (turn) board[now_y][now_x] = 3;
-                        else board[now_y][now_x] = 13;
-                        break;
-                    case 'd':
-                        if (turn) board[now_y][now_x] = 4;
-                        else board[now_y][now_x] = 14;
-                        break;
-                    case 'A':
-                        if (turn) board[now_y][now_x] = 5;
-                        else board[now_y][now_x] = 15;
-                        break;
-                    case 'B':
-                        if (turn) board[now_y][now_x] = 6;
-                        else board[now_y][now_x] = 16;
-                        break;
-                }
 
-                board[prev.first][prev.second] = 0;
-                for (int i = 0; i < tm.horse.length; i++) {
-                    if (tm.horse[i].position.first == prev.first & tm.horse[i].position.second == prev.second) {
-                        if (!tm.horse[i].historyStack.isEmpty()) {
-                            if (turn) board[prev.first][prev.second] = i + 1;
-                            else board[prev.first][prev.second] = i + 11;
+                if (isMoved) {
+                    //맵에 표시
+                    switch (h) {
+                        case 'a':
+                            if (turn) board[now_y][now_x] = 1;
+                            else board[now_y][now_x] = 11;
+                            break;
+                        case 'b':
+                            if (turn) board[now_y][now_x] = 2;
+                            else board[now_y][now_x] = 12;
+                            break;
+                        case 'c':
+                            if (turn) board[now_y][now_x] = 3;
+                            else board[now_y][now_x] = 13;
+                            break;
+                        case 'd':
+                            if (turn) board[now_y][now_x] = 4;
+                            else board[now_y][now_x] = 14;
+                            break;
+                        case 'A':
+                            if (turn) board[now_y][now_x] = 5;
+                            else board[now_y][now_x] = 15;
+                            break;
+                        case 'B':
+                            if (turn) board[now_y][now_x] = 6;
+                            else board[now_y][now_x] = 16;
+                            break;
+                    }
 
-                            if (tm.groupA.contains(tm.horse[i])) {
-                                if (turn) board[prev.first][prev.second] = 5;
-                                else board[prev.first][prev.second] = 15;
-                            } else if (tm.groupB.contains(tm.horse[i])) {
-                                if (turn) board[prev.first][prev.second] = 6;
-                                else board[prev.first][prev.second] = 16;
+                    board[prev.first][prev.second] = 0;
+                    for (int i = 0; i < tm.horse.length; i++) {
+                        if (tm.horse[i].position.first == prev.first & tm.horse[i].position.second == prev.second) {
+                            if (!tm.horse[i].historyStack.isEmpty()) {
+                                if (turn) board[prev.first][prev.second] = i + 1;
+                                else board[prev.first][prev.second] = i + 11;
+
+                                if (tm.groupA.contains(tm.horse[i])) {
+                                    if (turn) board[prev.first][prev.second] = 5;
+                                    else board[prev.first][prev.second] = 15;
+                                } else if (tm.groupB.contains(tm.horse[i])) {
+                                    if (turn) board[prev.first][prev.second] = 6;
+                                    else board[prev.first][prev.second] = 16;
+                                }
+
                             }
-
                         }
                     }
+                    tm.yut[toMove]--;
                 }
-                tm.yut[toMove]--;
+
                 break;
 
             case "roll":

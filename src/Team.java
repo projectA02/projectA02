@@ -42,11 +42,11 @@ public class Team {
         return yutNum;
     }
 
-    public Pair<Integer,Integer> controller(String command, char h, int toMove, char direction) {//move
-        /** 유효성 검사 통과 -> true , 불통 -> false ;
+    /*public Pair<Integer,Integer> controller(String command, char h, int toMove, char direction) {//move
+        *//** 유효성 검사 통과 -> true , 불통 -> false ;
          *  1. 'A' , 'B' 가 존재하는지?
          *  2. 들어온 말이 이미 난 말인지?
-         * */
+         * *//*
         System.out.println("move controller 실행"+toMove+" 이동");
 
         Pair<Integer,Integer> p = new Pair<>(-1,-1);
@@ -87,6 +87,10 @@ public class Team {
                 }
             }
         } else {
+            if (groupA.contains(horse[h-'a']) || groupB.contains(horse[h-'a'])) {
+                System.out.println("Already Grouped Horse");
+                return new Pair<>(-1,-1);
+            }
             p = horse[h-'a'].position;
             if (isEnd[h - 'a']) {
                 return new Pair<>(-1,-1);
@@ -97,6 +101,67 @@ public class Team {
         }
         moved = h;
         return p;
+    }*/
+
+    public boolean controller(String command, char h, int toMove, char direction) {//move
+        /** 유효성 검사 통과 -> true , 불통 -> false ;
+         *  1. 'A' , 'B' 가 존재하는지?
+         *  2. 들어온 말이 이미 난 말인지?
+         * */
+        System.out.println("move controller 실행"+toMove+" 이동");
+
+        Pair<Integer,Integer> p = new Pair<>(-1,-1);
+        if (h == 'A') {
+            for (int i = 0; i < horse.length; i++) {
+                if (groupA.contains(horse[i])) {
+                    p = horse[i].position;
+                }
+            }
+            if (groupA.isEmpty()) {
+                return false;
+            }
+            for (Horse horse1 : groupA) {
+                end = horse1.move(toMove, direction);
+                for (int i = 0; i < 4; i++){
+                    if (horse[i] == horse1){
+                        isEnd[i] = end;
+                        if(end) System.out.println(i+"번째 말이 났습니다");
+                    }
+                }
+            }
+        } else if (h == 'B') {
+            for (int i = 0; i < horse.length; i++) {
+                if (groupB.contains(horse[i])) {
+                    p = horse[i].position;
+                }
+            }
+            if (groupB.isEmpty()) {
+                return false;
+            }
+            for (Horse horse2 : groupB) {
+                end = horse2.move(toMove, direction);
+                for (int i = 0; i < 4; i++){
+                    if (horse[i] == horse2){
+                        isEnd[i] = end;
+                        if(end) System.out.println(i+"번째 말이 났습니다");
+                    }
+                }
+            }
+        } else {
+            if (groupA.contains(horse[h-'a']) || groupB.contains(horse[h-'a'])) {
+                System.out.println("Already Grouped Horse");
+                return false;
+            }
+            p = horse[h-'a'].position;
+            if (isEnd[h - 'a']) {
+                return false;
+            }
+            end = horse[h - 'a'].move(toMove, direction);
+            isEnd[h - 'a'] = end;
+            if(end) System.out.println((h-'a')+"번째 말이 났습니다");
+        }
+        moved = h;
+        return true;
     }
 
     public char controller(String command, char h1, char h2) {//grouping
@@ -178,7 +243,7 @@ public class Team {
             rollCnt++;
         }
         rollCnt--;
-        printYut(yut);
+        //printYut(yut);
         /*int count = 10;
         for (int i = 0; i < count; i++) {
             Random random = new Random();
