@@ -79,7 +79,7 @@ public class GameManager {
                 for (int i = 0; i < 6; i++) {
                     if (teamTmp.yut[i] != 0) canMove = true;
                 }
-                if(teamTmp.rollCnt == 0 & !canMove) { //rollCnt 없고, 못 움직일 때, turn 바뀜
+                if(teamTmp.rollCnt == 0 && !canMove) { //rollCnt 없고, 못 움직일 때, turn 바뀜
                     turn = !turn;
                     break;
                 }
@@ -92,11 +92,10 @@ public class GameManager {
      * map 그리기
      */
     public void drawMap() {
-        for (int i = 0; i < 20; i++) System.out.println();
+        for (int i = 0; i < 20; i++) System.out.println(); //화면 출력
         for (int i = 6; i >= 0; i--) {
             for (int j = 6; j >= 0; j--) {
                 switch (board[i][j]) {
-                    //todo Fill Mark
                     //Used black in Unicode (sp => dif size)
                     case -1: System.out.print("  "); break;
                     case  0: System.out.print("0 "); break;
@@ -130,25 +129,55 @@ public class GameManager {
      * 명령어 확인
      */
     public int checkCommand(String str, Team tm) {
-        String cmd[] = str.trim().split(" ");//양쪽 공백 날리고, 공백으로 명령어랑 인자 구분
+        String cmd[] = str.trim().split("\\s+");//양쪽 공백 날리고, 가변적 공백으로 명령어랑 인자 구분
+        if(cmd.length>4) return -1;//명령어, 인자 수 안맞을때
         switch (cmd[0].toLowerCase()) {//명령어 부분만 소문자로 변환
             case "move":
             case "m":
-                char h = cmd[1].charAt(0);
-                int toMove = Integer.parseInt(cmd[2]);
-                char direction = cmd[3].charAt(0);
-
-                if(tm.yut[toMove] <= 0) return 1;
-
-                /*todo 입력값 처리
-                if(cmd.length > 1) h = cmd[1].charAt(0);
-                if(cmd.length > 2) {
-                    toMove = Integer.parseInt(cmd[2]);
-                    if(tm.yut[toMove] <= 0) return 1;
+                char h='e';
+                int toMove=0;
+                char direction='A';
+                if(cmd[1].length()>3){
+                    System.out.println("error: 명령어 오류");
                 }
-                if(cmd.length > 3) direction = cmd[3].charAt(0);
-                else direction = 'Q';
-                */
+                else if(cmd[1].length()==3){//cmd[1]에 3글자
+                    h=cmd[1].charAt(0);
+                    toMove = Character.getNumericValue(cmd[1].charAt(1));
+                    direction = cmd[1].charAt(2);
+                }
+                else if(cmd[1].length()==2){//cmd[1]에 2글자
+                    h=cmd[1].charAt(0);
+                    toMove = Character.getNumericValue(cmd[1].charAt(1));
+                    direction = Character.toUpperCase(cmd[2].charAt(0));//이동시킬 방향
+
+                }
+                else if(cmd[1].length()==1){//cmd[1]에 1글자
+                    h = cmd[1].charAt(0);//이동시킬 말
+                    if(cmd[2].length()==2){//cmd[2]에 두글자
+                        toMove = Character.getNumericValue(cmd[2].charAt(0));
+                        direction = Character.toUpperCase(cmd[2].charAt(1));//이동시킬 방향
+                    }
+                    else{//cmd 2에 1글자
+                        toMove = Character.getNumericValue(cmd[2].charAt(0));
+                        direction = Character.toUpperCase(cmd[3].charAt(0));//이동시킬 방향
+                    }
+                }
+                else{
+                    System.out.println("error: 인자 입력 필요");
+                }
+                /*명령어 오류 걸러내기*/
+                if ((h < 1 && h > 6) || (h < 11 && h > 16)) {
+                    System.out.println("error: 가능한 말이 아님");
+                    return 1;
+                }//말 번호가 아닐 때
+                if (tm.yut[toMove] <= 0) {
+                    System.out.println("error: 이동 불가");
+                    return 1;
+                }
+                if (!(direction == 'N' || direction == 'E' || direction == 'W' || direction == 'S')) {
+                    System.out.println("error: 가능한 방향이 아님");
+                    return 1;
+                }
                 //기존 좌표 및 이동 가능여부
                 Pair<Integer, Integer> p = tm.horse[h-'a'].position;
                 Pair<Integer, Integer> prev = new Pair<>(p.first, p.second);

@@ -1,9 +1,13 @@
 import java.util.*;
 
 public class Horse {
-    public Pair<Integer, Integer> position = new Pair<>(0, 0);
+    public Pair<Integer, Integer> position; // position
     public Stack<Pair<Integer, Integer>> historyStack = new Stack<Pair<Integer, Integer>>(); // 한칸,한칸 마다 기록
 
+    public Horse(){
+        this.position = new Pair<>(0, 0);
+
+    }
 
     public boolean move(int toMove, char direction) {
 
@@ -50,15 +54,13 @@ public class Horse {
         Integer c_y = position.first;   // 현재위치 y좌표
         Integer c_x = position.second;  // 현재위치 x좌표
 
-        /*
+        /**
         알고리즘 설명
         1. toMove
         2. 분기점에서 출발한다면 방향을 고려해서 나아감
         3. 현재 위치에서 방향을 고려해서 나아감
          */
         while (toMove > 0) {    // 움직일 기회 0되면 종료
-
-
             historyStack.push(new Pair<>(c_y, c_x));    // 자취 등록
 
             // 현재 위치 int형으로 변환한 값
