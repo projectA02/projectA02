@@ -133,8 +133,12 @@ public class GameManager {
         System.out.print("A팀  ");
         for(int i = 0; i < 4; i++){
             System.out.print((char)('a'+i) + " : " );
-            if(!teamA.isEnd[i]) System.out.print((char)('①'+ i)+"  ");
-            else System.out.print("   ");
+            if(teamA.horse[i].position.first < 6 && teamA.horse[i].position.second < 6){
+                System.out.print("   ");
+            }else if(teamA.horse[i].position.first == 6 && teamA.horse[i].position.second == 6){
+
+            }
+            else  System.out.print((char)('①'+ i)+"  ");
         }
         System.out.println("");
 
@@ -349,8 +353,8 @@ public class GameManager {
     public int checkHorse(boolean turn, int y, int x) {
         int now = board[y][x];
         if(now == 1 || now == 2 || now == 3 || now == 4 || now == 5 || now == 6) {
-            if(turn) return 1;
-            else return 2;
+            if(turn) return 1; // grouping
+            else return 2; // kill
         }
         else if(now == 11 || now == 12 || now == 13 || now == 14 || now == 15 || now == 16) {
             if(turn) return 2;
