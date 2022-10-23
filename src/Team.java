@@ -118,6 +118,7 @@ public class Team {
                 }
             }
             if (groupA.isEmpty()) {
+                System.out.println("group A is Empty");
                 return false;
             }
             for (Horse horse1 : groupA) {
@@ -136,6 +137,7 @@ public class Team {
                 }
             }
             if (groupB.isEmpty()) {
+                System.out.println("group B is Empty");
                 return false;
             }
             for (Horse horse2 : groupB) {
@@ -154,6 +156,7 @@ public class Team {
             }
             p = horse[h-'a'].position;
             if (isEnd[h - 'a']) {
+                System.out.println("Horse is out");
                 return false;
             }
             end = horse[h - 'a'].move(toMove, direction);

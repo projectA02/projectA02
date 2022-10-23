@@ -69,9 +69,9 @@ public class GameManager {
             else teamTmp = teamB;
             teamTmp.rollCnt = 0; // todo 수정 필요
             //teamTmp.yut[5] = 1;
-            teamTmp.yut[0] = 1;
-            teamTmp.yut[1] = 3;// todo 수정 필요
+            teamTmp.yut[1] = 2;// todo 수정 필요
             teamTmp.yut[2] = 2;
+            teamTmp.yut[3] = 2;
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
@@ -222,7 +222,10 @@ public class GameManager {
      */
     public int checkCommand(String str, Team tm) {
         String cmd[] = str.trim().split("\\s+");//양쪽 공백 날리고, 가변적 공백으로 명령어랑 인자 구분
-        if (cmd.length > 4) return -1;//명령어, 인자 수 안맞을때
+        if (cmd.length > 4) {
+            System.out.println("Input length is too long");
+            return -1;//명령어, 인자 수 안맞을때
+        }
         if (cmd[0].length() == 0 && canGroup) {
             System.out.println("Chose not to group");
             canGroup = false;
@@ -349,8 +352,10 @@ public class GameManager {
                         return 31; //아군
                     case 2:
                         kill(tm, now_y, now_x);
+                        System.out.println("checkHorse case 2");
                         break; //적군
                     default:
+                        System.out.println("checkHorse default");
                         break; //없을 때
                 }
 
@@ -546,8 +551,8 @@ public class GameManager {
                 break;
             case 6:
                 for (int i = 0; i < teamB.horse.length; i++) {
-                    if (teamB.groupB.contains(teamB.horse[i])) {
-                        teamB.horse[i] = new Horse();
+                    if (teamA.groupB.contains(teamA.horse[i])) {
+                        teamA.horse[i] = new Horse();
                     }
                 }
                 teamA.groupB.clear();
@@ -559,9 +564,19 @@ public class GameManager {
                 teamB.horse[now - 11] = new Horse();
                 break;
             case 15:
+                for (int i = 0; i < teamB.horse.length; i++) {
+                    if (teamB.groupA.contains(teamB.horse[i])) {
+                        teamB.horse[i] = new Horse();
+                    }
+                }
                 teamB.groupA.clear();
                 break;
             case 16:
+                for (int i = 0; i < teamB.horse.length; i++) {
+                    if (teamB.groupB.contains(teamB.horse[i])) {
+                        teamB.horse[i] = new Horse();
+                    }
+                }
                 teamB.groupB.clear();
                 break;
         }
