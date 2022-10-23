@@ -102,7 +102,7 @@ public class Team {
         return p;
     }
 
-    public boolean controller(String command, char h1, char h2) {//grouping
+    public char controller(String command, char h1, char h2) {//grouping
         /**
          * 유효성 검사
          * 1. 그룹이 비어있는가?
@@ -113,8 +113,7 @@ public class Team {
             if (moved == h1 || moved == h2) {
                 if ((horse[h1 - 'a'].position.first.intValue() == horse[h2 - 'a'].position.first.intValue())&&
                         horse[h1 - 'a'].position.second.intValue() == horse[h2 - 'a'].position.second.intValue()) {
-                    grouping(h1, h2);
-                    return true;
+                    return grouping(h1, h2);
                 }
             }
         } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3 그룹 + 그룹
@@ -130,12 +129,10 @@ public class Team {
                     }
                 }
                 if (p1.first.intValue() == -1 || p2.first.intValue() == -1) {
-                    System.out.println("잘못된 그룹핑입니다. ");
-                    return false; // group 이 비어 있는 경우
-                }
-                else if (p1 == p2) {
-                    grouping(h1, h2);
-                    return true;
+                    System.out.print("p1.first.intValue() == -1 || p2.first.intValue() == -1: ");
+                    return 'Z'; // group 이 비어 있는 경우: false의 의미로 Z를 반환합니다.
+                } else if (p1.first.intValue() == p2.first.intValue() && p1.second.intValue() == p2.second.intValue()) {
+                    return grouping(h1, h2);
                 }
             }
         } else {                                                                // case 2 그룹 + 말
@@ -149,18 +146,15 @@ public class Team {
                     }
                 }
                 if (p.first.intValue() == -1) {
-                    System.out.println("잘못된 그룹핑입니다. ");
-                    return false; // group 이 비어 있는 경우
-                }
-
-                else if (p == horse[h - 'a'].position) {
-                    grouping(h1, h2);
-                    return true;
+                    System.out.print("p.first.intValue() == -1: ");
+                    return 'Z'; // false의 의미로 Z를 반환합니다.
+                } else if (p.first.intValue() == horse[h - 'a'].position.first && p.second.intValue() == horse[h - 'a'].position.second) {
+                    return grouping(h1, h2);
                 }
             }
         }
-        System.out.println("잘못된 그룹핑입니다.");
-        return false;
+        System.out.print("Not Grouped: ");
+        return 'Z'; // false의 의미로 Z를 반환합니다.
     }
 
     /**
@@ -225,7 +219,7 @@ public class Team {
      * 실제 그룹 배열
      * 그룹핑 어떻게 할지
      */
-    public void grouping(char h1, char h2) {
+    public char grouping(char h1, char h2) {
         /** 명령어 검사(GameManager 의 checkCommander) 에서
          * @args_h1 : 그룹핑할 대상 1
          * @args_h2 : 그룹핑할 대상 2
@@ -239,18 +233,27 @@ public class Team {
             if (groupA.isEmpty()) {
                 groupA.add(horse[h1 - 'a']);
                 groupA.add(horse[h2 - 'a']);
+                return 'A';
             } else {
                 groupB.add(horse[h1 - 'a']);
                 groupB.add(horse[h2 - 'a']);
+                return 'B';
             }
         } else if (Character.isUpperCase(h1) && Character.isUpperCase(h2)) {    // case 3 그룹 + 그룹
             groupA.addAll(groupB);
             groupB.clear();
+            return 'A';
         } else {                                                                // case 2 말 + 그룹
             char g = Character.isUpperCase(h1) ? h1 : h2;
             char h = Character.isLowerCase(h1) ? h1 : h2;
-            if (g == 'A') groupA.add(horse[h - 'a']);
-            else groupB.add(horse[h - 'a']);
+            if (g == 'A') {
+                groupA.add(horse[h - 'a']);
+                return 'A';
+            }
+            else {
+                groupB.add(horse[h - 'a']);
+                return 'B';
+            }
         }
     }
 
