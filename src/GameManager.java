@@ -100,7 +100,7 @@ public class GameManager {
                         if(h.historyStack.size() != 1) endTurn = false;
                     }
                 }
-                if (teamTmp.rollCnt == 0 & endTurn) {
+                if (teamTmp.rollCnt == 0 & endTurn & !canGroup) {
                     turn = !turn;
                     break;
                 }
@@ -190,9 +190,15 @@ public class GameManager {
     public int checkCommand(String str, Team tm) {
         String cmd[] = str.trim().split("\\s+");//양쪽 공백 날리고, 가변적 공백으로 명령어랑 인자 구분
         if(cmd.length>4) return -1;//명령어, 인자 수 안맞을때
+        if(cmd.length == 0 && canGroup) {
+            System.out.println("Chose not to group");
+            canGroup = false;
+            return 0;
+        }
         switch (cmd[0].toLowerCase()) {//명령어 부분만 소문자로 변환
             case "move":
             case "m":
+                canGroup = false;
                 char h='e';
                 int toMove=0;
                 char direction='A';
@@ -293,7 +299,7 @@ public class GameManager {
                     case 1: canGroup = true;
                         board[prev.first][prev.second] = 0;
                         tm.yut[toMove]--;
-                    return 31; //아군
+                        return 31; //아군
                     case 2: kill(tm, now_y, now_x); break; //적군
                     default: break; //없을 때
                 }
@@ -337,6 +343,7 @@ public class GameManager {
 
             case "roll":
             case "r":
+                canGroup = false;
                 if (tm.rollCnt == 0) return 2;
                 tempYut = tm.controller(cmd[0]);
                 break;
@@ -426,7 +433,7 @@ public class GameManager {
             case  1: System.out.println("Cannot Move"); break;
             case  2: System.out.println("Not Enough Roll Chance"); break;
             case  3: System.out.println("Cannot Grouping"); break;
-            case 31: System.out.println("Can Grouping"); break;
+            case 31: System.out.println("Can Grouping: Press Enter not to Group"); break;
             case 32: System.out.println("Can Kill"); break;
             default: System.out.println("Input Command is Incorrect"); break;
         }
