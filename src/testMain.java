@@ -43,7 +43,16 @@ public class testMain {
 //        } catch (InterruptedException var2) {
 //            var2.printStackTrace();
 //        }
+        //todo 말 크기가 다름. 말 띄울 수 있게 변환
+        System.out.println("\n<말 대기현황>");
+        System.out.println("A팀  a : ⓐ  b : ⓑ  c :  ③  d :  ");
+        System.out.println("B팀  a :     b : ○  c :     d :  ○");
+        System.out.println("\n\n");
 
+        System.out.println("말 대기현황");
+        System.out.println("A팀  a : ①  b :   c :  ③  d :  ");
+        //➊➋➌➍$
+        System.out.println("B팀  a : ➊  b :   c :  ➌  d :  ➍");
     GameManager gm = new GameManager();
     gm.showMenu();
 
@@ -115,21 +124,23 @@ public class testMain {
 //
 //        //System.out.println("윷판");
 //        System.out.println("방위");
-        String[][] board = {
-            {"O ", "O ","O ","  ","O ","O ","O "},
-            {"O ", "O ","  ","  ","  ","O ","O "},
-            {"O ", "  ","O ","  ","O ","  ","O "},
-            {"  ", "  ","  ","O ","  ","  ","  "},
-            {"O ", "  ","O ","  ","O ","  ","O "},
-            {"O ", "O ","  ","  ","  ","O ","O "},
-            {"O ", "O ","O ","  ","O ","O ","O "},
-        };
-        for(int i= 0;i<7;i++){
-            for(int j=0;j<7;j++){
-                System.out.print(i +""+j+" ");
-            }
-            System.out.println();
-        }
+//        String[][] board = {
+//            {"O ", "O ","O ","  ","O ","O ","O "},
+//            {"O ", "O ","  ","  ","  ","O ","O "},
+//            {"O ", "  ","O ","  ","O ","  ","O "},
+//            {"  ", "  ","  ","O ","  ","  ","  "},
+//            {"O ", "  ","O ","  ","O ","  ","O "},
+//            {"O ", "O ","  ","  ","  ","O ","O "},
+//            {"O ", "O ","O ","  ","O ","O ","O "},
+//        };
+//        for(int i= 0;i<7;i++){
+//            for(int j=0;j<7;j++){
+//                System.out.print(i +""+j+" ");
+//            }
+//            System.out.println();
+//        }
+
+
 //
 //        System.out.println("-----ROLL-----");
 //        System.out.println("도 : 0, 개 : 0 ,걸 : 0,윷 : 0 ,모 : 0 ");
@@ -182,10 +193,7 @@ public class testMain {
 //            System.out.println();
 //        }
 //
-//        System.out.println("말 대기현황");
-//        System.out.println("A팀  a : ①  b :   c :  ③  d :  ");
-//        //➊➋➌➍$
-//        System.out.println("B팀  a : ➊  b :   c :  ➌  d :  ➍");
+
     }
 
 }

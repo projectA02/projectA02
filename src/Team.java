@@ -19,6 +19,9 @@ public class Team {
      */
     public Team(int teamNum) {
         this.horse = new Horse[4];
+        for(int i  = 0 ;i<4;i++){
+            horse[i] = new Horse();
+        }
         this.groupA = new HashSet<>();
         this.groupB = new HashSet<>();
         this.isEnd = new boolean[4];
