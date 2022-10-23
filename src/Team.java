@@ -49,22 +49,23 @@ public class Team {
          *  1. 'A' , 'B' 가 존재하는지?
          *  2. 들어온 말이 이미 난 말인지?
          * */
+        System.out.println("move controller 실행");
         Pair<Integer,Integer> p = horse[h-'a'].position;
-        if (h == 'A') {
+        if (h == 'A') { // 그룹A
             if (groupA.isEmpty()) {
                 return new Pair<>(-1,-1);
             }
             for (Horse horse1 : groupA) {
                 horse1.move(toMove, direction);
             }
-        } else if (h == 'B') {
+        } else if (h == 'B') { // 그룹 B
             if (groupB.isEmpty()) {
                 return new Pair<>(-1,-1);
             }
             for (Horse horse2 : groupB) {
                 horse2.move(toMove, direction);
             }
-        } else {
+        } else { // 말
             if (isEnd[h - 'a']) {
                 return new Pair<>(-1,-1);
             }

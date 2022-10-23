@@ -59,7 +59,7 @@ public class GameManager {
             Team teamTmp;
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
-            teamTmp.rollCnt = 1;
+            teamTmp.rollCnt = 100; // todo 수정 필요
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
@@ -68,11 +68,11 @@ public class GameManager {
                 teamTmp.printSrc();
                 System.out.println("팀 A 말 위치 현황");
                 for(int i = 0;i<4;i++){
-                    System.out.print(teamA.horse[i].position.first + " "+ teamA.horse[i].position.second + " ");
+                    System.out.print(i+1+"번 말 :  ("+teamA.horse[i].position.first + " ,"+ teamA.horse[i].position.second + ") ");
                 }
-                System.out.println("팀 B 말 위치 현황");
+                System.out.println("\n팀 B 말 위치 현황");
                 for(int i = 0;i<4;i++){
-                    System.out.print(teamB.horse[i].position.first + " "+ teamB.horse[i].position.second+ " ");
+                    System.out.print(i+1+"번 말 :  ("+teamB.horse[i].position.first + " ,"+ teamB.horse[i].position.second+ ") ");
                 }
                 printCommand(turn, isCan);
                 System.out.print(">>>");
@@ -100,12 +100,12 @@ public class GameManager {
      */
     public void drawMap() {
         for (int i = 0; i < 20; i++) System.out.println(); //화면 출력
-        for (int i = 6; i >= 0; i--) {
-            for (int j = 6; j >= 0; j--) {
+        for (int i = 0; i <= 6; i++) {
+            for (int j = 0; j <= 6; j++) {
                 switch (board[i][j]) {
                     //Used black in Unicode (sp => dif size)
                     case -1: System.out.print("  "); break;
-                    case  0: System.out.print("0 "); break;
+                    case  0: System.out.print("O "); break;
                     //Team A
                     case  1: System.out.print("① "); break;
                     case  2: System.out.print("② "); break;

@@ -5,7 +5,7 @@ public class Horse {
     public Stack<Pair<Integer, Integer>> historyStack = new Stack<Pair<Integer, Integer>>(); // 한칸,한칸 마다 기록
 
     public Horse(){
-        this.position = new Pair<>(0, 0);
+        this.position = new Pair<>(6, 6);
 
     }
 
@@ -60,6 +60,7 @@ public class Horse {
         2. 분기점에서 출발한다면 방향을 고려해서 나아감
         3. 현재 위치에서 방향을 고려해서 나아감
          */
+        System.out.println("이동전 확인"); //todo 이후에 지우기
         while (toMove > 0) {    // 움직일 기회 0되면 종료
             historyStack.push(new Pair<>(c_y, c_x));    // 자취 등록
 
@@ -175,7 +176,7 @@ public class Horse {
                 x_pos = x_pos + dx;
                 y_pos = y_pos + dy;
             }
-
+            System.out.println("이동중인 좌표 : "+x_pos+","+y_pos);
             // 현재 위치 및 남은 이동횟수 업데이트
             position.first = Integer.valueOf(y_pos);
             position.second = Integer.valueOf(x_pos);
