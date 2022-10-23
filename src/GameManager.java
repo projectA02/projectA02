@@ -133,10 +133,16 @@ public class GameManager {
         System.out.print("A팀  ");
         for(int i = 0; i < 4; i++){
             System.out.print((char)('a'+i) + " : " );
-            if(teamA.horse[i].position.first < 6 && teamA.horse[i].position.second < 6){
+            if(teamA.horse[i].position.first < 6 || teamA.horse[i].position.second < 6){
                 System.out.print("   ");
             }else if(teamA.horse[i].position.first == 6 && teamA.horse[i].position.second == 6){
-
+                if(teamA.horse[i].historyStack.isEmpty()){
+                    System.out.print((char)('①'+ i)+"  ");
+                }else{
+                    System.out.print("   ");
+                }
+            }else if(teamA.horse[i].position.first == 6 && teamA.horse[i].position.second == 7){
+                System.out.print("   ");
             }
             else  System.out.print((char)('①'+ i)+"  ");
         }
@@ -145,9 +151,24 @@ public class GameManager {
         System.out.print("B팀  ");
         for(int i = 0; i < 4; i++){
             System.out.print((char)('a'+i) + " : " );
-            if(!teamB.isEnd[i]) System.out.print((char)('❶'+ i)+"  ");
-            else System.out.print("   ");
+            if(teamB.horse[i].position.first < 6 || teamB.horse[i].position.second < 6){
+                System.out.print("   ");
+            }else if(teamB.horse[i].position.first == 6 && teamB.horse[i].position.second == 6){
+                if(teamB.horse[i].historyStack.isEmpty()){
+                    System.out.print((char)('❶'+ i)+"  ");
+                }else{
+                    System.out.print("   ");
+                }
+            }else if(teamB.horse[i].position.first == 6 && teamB.horse[i].position.second == 7){
+                System.out.print("   ");
+            }
+            else  System.out.print((char)('❶'+ i)+"  ");
         }
+//        for(int i = 0; i < 4; i++){
+//            System.out.print((char)('a'+i) + " : " );
+//            if(!teamB.isEnd[i]) System.out.print((char)('❶'+ i)+"  ");
+//            else System.out.print("   ");
+//        }
         System.out.println("");
         //System.out.println("\n\n");
     }
