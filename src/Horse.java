@@ -11,6 +11,7 @@ public class Horse {
     public boolean move(int toMove, char direction) {
 
         // 백도일때 처리
+        // 백도일때 처리
         if (toMove == 0) {
             // historyStack이 비어있을 때
 
@@ -20,39 +21,42 @@ public class Horse {
                 p = historyStack.elementAt(i);
                 System.out.println(p.first+"," +p.second);
             }
-
-
-            historyStack.pop();
-            if (historyStack.isEmpty()) {
-                Integer i_x = 6, j_y = 6;
-
-                for (j_y = 6; j_y >= 0; j_y--) {
-                    if (j_y == 3)
-                        continue;
-                    historyStack.push(new Pair<>(j_y, i_x));
-                }
-                j_y = 0;
-                for (i_x = 5; i_x >= 0; i_x--) {
-                    if (i_x == 3)
-                        continue;
-                    historyStack.push(new Pair<>(j_y, i_x));
-                }
-                i_x = 0;
-                for (j_y = 1; j_y <= 6; j_y++) {
-                    if (j_y == 3)
-                        continue;
-                    historyStack.push(new Pair<>(j_y, i_x));
-                }
-                j_y = 6;
-                for (i_x = 1; i_x <= 6; i_x++) {
-                    if (i_x == 3)
-                        continue;
-                    historyStack.push(new Pair<>(j_y, i_x));
-                }
+            if(historyStack.isEmpty()){
 
             }
+            else {
+                historyStack.pop();
+                if (historyStack.isEmpty()) {
+                    Integer i_x = 6, j_y = 6;
 
-            position = historyStack.peek();
+                    for (j_y = 6; j_y >= 0; j_y--) {
+                        if (j_y == 3)
+                            continue;
+                        historyStack.push(new Pair<>(j_y, i_x));
+                    }
+                    j_y = 0;
+                    for (i_x = 5; i_x >= 0; i_x--) {
+                        if (i_x == 3)
+                            continue;
+                        historyStack.push(new Pair<>(j_y, i_x));
+                    }
+                    i_x = 0;
+                    for (j_y = 1; j_y <= 6; j_y++) {
+                        if (j_y == 3)
+                            continue;
+                        historyStack.push(new Pair<>(j_y, i_x));
+                    }
+                    j_y = 6;
+                    for (i_x = 1; i_x <= 6; i_x++) {
+                        if (i_x == 3)
+                            continue;
+                        historyStack.push(new Pair<>(j_y, i_x));
+                    }
+
+                }
+
+                position = historyStack.peek();
+            }
 
         }
 

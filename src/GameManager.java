@@ -60,9 +60,11 @@ public class GameManager {
             Team teamTmp;
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
-            teamTmp.rollCnt = 0; // todo 수정 필요
-            //teamTmp.yut[5] = 100; // todo 수정 필요
-            teamTmp.yut[0] = 1;
+           // teamTmp.rollCnt = 0; // todo 수정 필요
+           // teamTmp.yut[0] = 1;
+           // teamTmp.yut[1]=2;// todo 수정 필요
+           // teamTmp.yut[2] = 2;
+            //teamTmp.yut[1] = 2;
             //teamTmp.isTurnEnd = false;
 
             while (true) { //해당 Team의 Turn이 지속될 때 유지
@@ -89,14 +91,16 @@ public class GameManager {
                     return;
                 }
                 // 해당 팀에게 갱신
-                if (turn) teamA = teamTmp;
-                else teamB = teamTmp;
-                // Turn End 확인 todo 말이 없을 때 백도 나오면 종료해야함.
-                boolean canMove = false;
-                for (int i = 0; i < 6; i++) {
-                    if (teamTmp.yut[i] != 0) canMove = true;
+                boolean endTurn = true;
+                for(int i=1; i<teamTmp.yut.length; i++) {
+                    if(teamTmp.yut[i] != 0) endTurn = false;
                 }
-                if(teamTmp.rollCnt == 0 && !canMove) { //rollCnt 없고, 못 움직일 때, turn 바뀜
+                if(teamTmp.yut[0] != 0) {
+                    for(Horse h : teamTmp.horse) {
+                        if(h.historyStack.size() != 1) endTurn = false;
+                    }
+                }
+                if (teamTmp.rollCnt == 0 & endTurn) {
                     turn = !turn;
                     break;
                 }
@@ -415,6 +419,7 @@ public class GameManager {
             case 4: teamA.horse[now-1] = new Horse(); break;
             //todo 그룹화된 거 위치 초기화 어떻게 할지 생각 좀 해봅시다. 5, 6, 15, 16
             case 5:
+
                 teamA.groupA.clear();
                 break;
             case 6:
