@@ -343,8 +343,28 @@ public class GameManager {
             case "grouping":
             case "g":
                 if(!canGroup) return 3;
+                char h1 = 'Z', h2 = 'Z';
+
+                if(cmd[1].length() > 2) {
+                    System.out.println("error: 명령어 오류");
+                } else if(cmd[1].length() == 2){ //cmd[1]에 2글자
+                    h1 = cmd[1].charAt(0);
+                    h2 = cmd[1].charAt(1);
+                } else if(cmd[1].length() == 1){ //cmd[1]에 1글자
+                    h1 = cmd[1].charAt(0);
+                    h2 = cmd[2].charAt(0);
+                } else {
+                    System.out.println("error: 인자 입력 필요");
+                }
+
+                if ((h1 < 'a' || h1 > 'd') && (h1 < 'A' || h1 > 'B')
+                        ||(h2 < 'a' || h2 > 'd') && (h2 < 'A' || h2 > 'B')) {
+                    System.out.println("error: 가능한 말이 아님");
+                    return 1;
+                }
+
                 char gCheck = tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0)); // grouping 체크
-                char h1 = cmd[1].charAt(0);
+
                 now_y = -1;
                 now_x = -1;
                 switch (gCheck) {
