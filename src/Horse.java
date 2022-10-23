@@ -13,6 +13,15 @@ public class Horse {
         // 백도일때 처리
         if (toMove == 0) {
             // historyStack이 비어있을 때
+
+            // 스택 내용 확인
+            for (int i =0; i< historyStack.size(); i++){
+                Pair<Integer, Integer> p = new Pair<>(0,0); // position
+                p = historyStack.elementAt(i);
+                System.out.println(p.first+"," +p.second);
+            }
+
+
             historyStack.pop();
             if (historyStack.isEmpty()) {
                 Integer i_x = 6, j_y = 6;
@@ -20,29 +29,28 @@ public class Horse {
                 for (j_y = 6; j_y >= 0; j_y--) {
                     if (j_y == 3)
                         continue;
-                    historyStack.push(new Pair<>(i_x, j_y));
+                    historyStack.push(new Pair<>(j_y, i_x));
                 }
                 j_y = 0;
                 for (i_x = 5; i_x >= 0; i_x--) {
                     if (i_x == 3)
                         continue;
-                    historyStack.push(new Pair<>(i_x, j_y));
+                    historyStack.push(new Pair<>(j_y, i_x));
                 }
                 i_x = 0;
                 for (j_y = 1; j_y <= 6; j_y++) {
                     if (j_y == 3)
                         continue;
-                    historyStack.push(new Pair<>(i_x, j_y));
+                    historyStack.push(new Pair<>(j_y, i_x));
                 }
                 j_y = 6;
                 for (i_x = 1; i_x <= 6; i_x++) {
                     if (i_x == 3)
                         continue;
-                    historyStack.push(new Pair<>(i_x, j_y));
+                    historyStack.push(new Pair<>(j_y, i_x));
                 }
 
             }
-
 
             position = historyStack.peek();
 
@@ -63,7 +71,6 @@ public class Horse {
          */
         System.out.println("이동전 확인"); //todo 이후에 지우기
         while (toMove > 0) {    // 움직일 기회 0되면 종료
-
             // 현재 위치 int형으로 변환한 값
             y_pos = position.first.intValue();
             x_pos = position.second.intValue();
@@ -168,7 +175,7 @@ public class Horse {
             else {
                 System.out.println("MOVE함수 오류 잘못들어왔습니다! 오류난 좌표" + "(" + position.first + ", " + position.second + ")");
             }
-            historyStack.push(new Pair<>(c_y, c_x));    // 자취 등록
+
 
             x_pos = x_pos + dx;
             y_pos = y_pos + dy;
@@ -190,6 +197,8 @@ public class Horse {
             direction = 'Z';    // 방향 없애주기 없는 방향은 Z로 함
             c_y = position.first;
             c_x = position.second;
+
+            historyStack.push(new Pair<>(c_y, c_x));    // 자취 등록
         }
 
         return false;   // 말이 나지 않았으므로 false 반환
