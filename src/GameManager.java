@@ -16,7 +16,7 @@ public class GameManager {
     GameManager() {
         boolean prog = true;
         while (prog) {
-            switch (showMenu()) { //todo input contents
+            switch (showMenu()) {
                 case "1": playGame(); break;
                 case "2": description(); break;
                 case "3": prog = false; break;
@@ -60,10 +60,10 @@ public class GameManager {
             Team teamTmp;
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
-           // teamTmp.rollCnt = 0; // todo 수정 필요
-           // teamTmp.yut[0] = 1;
-           // teamTmp.yut[1]=2;// todo 수정 필요
-           // teamTmp.yut[2] = 2;
+            teamTmp.rollCnt = 0; // todo 수정 필요
+            //teamTmp.yut[5] = 1;
+            teamTmp.yut[1]= 2;// todo 수정 필요
+            teamTmp.yut[2] = 2;
             //teamTmp.yut[1] = 2;
             //teamTmp.isTurnEnd = false;
 
@@ -90,7 +90,7 @@ public class GameManager {
                     System.out.println("Press Enter! Back to Menu!");
                     return;
                 }
-                // 해당 팀에게 갱신
+
                 boolean endTurn = true;
                 for(int i=1; i<teamTmp.yut.length; i++) {
                     if(teamTmp.yut[i] != 0) endTurn = false;
@@ -140,7 +140,6 @@ public class GameManager {
             System.out.println();
         }
         //ⓐⓑⓒⓓⒶⒷ○①②③④❶❷➌➍🅐 🅑 Ⓐ Ⓑ
-        //todo 말 크기가 다름. 말 띄울 수 있게 변환
         System.out.println("<말 대기현황>");
         System.out.print("A팀  ");
         for(int i = 0; i < 4; i++){
@@ -227,7 +226,8 @@ public class GameManager {
                         if(Character.isDigit(cmd[2].charAt(0)))
                             toMove = Character.getNumericValue(cmd[2].charAt(0));
                         else System.out.println("error: 이동 칸 수는 숫자");
-                        direction = Character.toUpperCase(cmd[3].charAt(0));//이동시킬 방향
+                        if(cmd.length<=3) direction = 'Z';
+                        else direction = Character.toUpperCase(cmd[3].charAt(0));//이동시킬 방향
                     }
                 }
                 else{
@@ -242,7 +242,8 @@ public class GameManager {
                     System.out.println("error: 이동 불가");
                     return 1;
                 }
-                if (!(direction == 'N' || direction == 'E' || direction == 'W' || direction == 'S')) {
+                // 분기점에서 방향을 입력하지 않았을때 예외 처리
+                if (!(direction == 'N' || direction == 'E' || direction == 'W' || direction == 'S'|| direction == 'Z')) { //todo 확인
                     System.out.println("error: 가능한 방향이 아님");
                     return 1;
                 }
@@ -363,7 +364,7 @@ public class GameManager {
                     return 1;
                 }
 
-                char gCheck = tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0)); // grouping 체크
+                char gCheck = tm.controller(cmd[0], h1, h2); // grouping 체크
 
                 now_y = -1;
                 now_x = -1;
@@ -439,10 +440,19 @@ public class GameManager {
             case 4: teamA.horse[now-1] = new Horse(); break;
             //todo 그룹화된 거 위치 초기화 어떻게 할지 생각 좀 해봅시다. 5, 6, 15, 16
             case 5:
-
+                for (int i = 0; i < teamA.horse.length; i++) {
+                    if (teamA.groupA.contains(teamA.horse[i])) {
+                        teamA.horse[i] = new Horse();
+                    }
+                }
                 teamA.groupA.clear();
                 break;
             case 6:
+                for (int i = 0; i < teamB.horse.length; i++) {
+                    if (teamB.groupB.contains(teamB.horse[i])) {
+                        teamB.horse[i] = new Horse();
+                    }
+                }
                 teamA.groupB.clear();
                 break;
             case 11:
@@ -460,7 +470,6 @@ public class GameManager {
         board[y][x] = 0;
     }
 
-    //todo 설명창 채우기
     public void description() {
         System.out.println("게임은 A, B팀으로 진행된다. 각 팀 당 말 4개(a, b, c, d)를 가지고 있으며 이 말들이 모두 먼저 난 팀이 승리한다.\n" +
                         "방위는 시작 점 기준으로 시작점은 S, 시작점의 대각선 위쪽은 N, 시작점의 위쪽은 E, 시작점의 오른쪽은 W이다.\n" +

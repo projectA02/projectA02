@@ -15,9 +15,6 @@ public class Team {
     public int teamNum; // 1 팀인지 2팀인지
     public boolean isTurnEnd;
 
-    /**
-     * todo : 생성자 작성
-     */
     public Team(int teamNum) {
         this.horse = new Horse[4];
         for(int i  = 0 ;i<4;i++){
@@ -159,7 +156,6 @@ public class Team {
 
     /**
      * roll 이 하는 역할 : 윷 굴리기
-     * todo : 윷 확률 결정해주기
      * https://keichee.tistory.com/312 -> ref
      */
     public int roll() {
