@@ -69,7 +69,7 @@ public class Horse {
          2. 분기점에서 출발한다면 방향을 고려해서 나아감
          3. 현재 위치에서 방향을 고려해서 나아감
          */
-        System.out.println("이동전 확인"); //todo 이후에 지우기
+
         while (toMove > 0) {    // 움직일 기회 0되면 종료
             // 현재 위치 int형으로 변환한 값
             y_pos = position.first.intValue();
@@ -78,7 +78,6 @@ public class Horse {
             // 출발 분기점. 일단 분기점이어서 따로 만듬.
             if ((y_pos == 6 && x_pos == 6) && historyStack.isEmpty() == true) {
                 dy = -1;
-                System.out.println("지나가나??"); // todo 지우기
             }
             // 말이 (0,6)에 있는 경우
             else if (y_pos == 0 && x_pos == 6) {

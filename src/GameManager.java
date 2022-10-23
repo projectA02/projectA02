@@ -59,7 +59,7 @@ public class GameManager {
             Team teamTmp;
             if (turn) teamTmp = teamA;
             else teamTmp = teamB;
-            teamTmp.rollCnt = 1; // todo 수정 필요
+            teamTmp.rollCnt = 1000; // todo 수정 필요
            //teamTmp.yut[0] = 10; // todo 수정 필요
             //teamTmp.isTurnEnd = false;
 
@@ -252,7 +252,9 @@ public class GameManager {
 
                 // 겹쳐지는가?
                 switch (checkHorse(turn, now_y, now_x)) {
-                    case 1: canGroup = true; return 31; //아군
+                    case 1: canGroup = true;
+                        board[prev.first][prev.second] = 0;
+                    return 31; //아군
                     case 2: kill(tm, now_y, now_x); break; //적군
                     default: break; //없을 때
                 }
@@ -303,8 +305,7 @@ public class GameManager {
             case "grouping":
             case "g":
                 if(!canGroup) return 3;
-                tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0));
-                char gCheck = tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0));
+                char gCheck = tm.controller(cmd[0], cmd[1].charAt(0), cmd[2].charAt(0)); // grouping 체크
                 char h1 = cmd[1].charAt(0);
                 now_y = -1;
                 now_x = -1;
@@ -333,6 +334,8 @@ public class GameManager {
                         System.out.println("Grouping Error: return Z");
                         break;
                 }
+                canGroup = false;
+                break;
             //첫 단어가 올바른 명령어가 아닐 경우
             default:
                 return -1;
