@@ -44,15 +44,15 @@ public class testMain {
 //            var2.printStackTrace();
 //        }
         //todo 말 크기가 다름. 말 띄울 수 있게 변환
-        System.out.println("\n<말 대기현황>");
-        System.out.println("A팀  a : ⓐ  b : ⓑ  c :  ③  d :  ");
-        System.out.println("B팀  a :     b : ○  c :     d :  ○");
-        System.out.println("\n\n");
-
-        System.out.println("말 대기현황");
-        System.out.println("A팀  a : ①  b :   c :  ③  d :  ");
-        //➊➋➌➍$
-        System.out.println("B팀  a : ➊  b :   c :  ➌  d :  ➍");
+//        System.out.println("\n<말 대기현황>");
+//        System.out.println("A팀  a : ⓐ  b : ⓑ  c :  ③  d :  ");
+//        System.out.println("B팀  a :     b : ○  c :     d :  ○");
+//        System.out.println("\n\n");
+//
+//        System.out.println("말 대기현황");
+//        System.out.println("A팀  a : ①  b :   c :  ③  d :  ");
+//        //➊➋➌➍$
+//        System.out.println("B팀  a : ➊  b :   c :  ➌  d :  ➍");
     GameManager gm = new GameManager();
     gm.showMenu();
 
