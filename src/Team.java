@@ -50,22 +50,33 @@ public class Team {
          *  2. 들어온 말이 이미 난 말인지?
          * */
         System.out.println("move controller 실행");
-        Pair<Integer,Integer> p = horse[h-'a'].position;
-        if (h == 'A') { // 그룹A
+        Pair<Integer,Integer> p = new Pair<>(-1,-1);
+        if (h == 'A') {
+            for (int i = 0; i < horse.length; i++) {
+                if (groupA.contains(horse[i])) {
+                    p = horse[i].position;
+                }
+            }
             if (groupA.isEmpty()) {
                 return new Pair<>(-1,-1);
             }
             for (Horse horse1 : groupA) {
                 horse1.move(toMove, direction);
             }
-        } else if (h == 'B') { // 그룹 B
+        } else if (h == 'B') {
+            for (int i = 0; i < horse.length; i++) {
+                if (groupB.contains(horse[i])) {
+                    p = horse[i].position;
+                }
+            }
             if (groupB.isEmpty()) {
                 return new Pair<>(-1,-1);
             }
             for (Horse horse2 : groupB) {
                 horse2.move(toMove, direction);
             }
-        } else { // 말
+        } else {
+            p = horse[h-'a'].position;
             if (isEnd[h - 'a']) {
                 return new Pair<>(-1,-1);
             }
