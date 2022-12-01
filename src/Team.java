@@ -1,5 +1,6 @@
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Stack;
 
 public class Team {
     public Horse[] horse;
@@ -11,6 +12,7 @@ public class Team {
     public int rollCnt; // roll 던질 수 있는 횟수
     public int prevYut; //직전에 던진 윷 저장
     public int teamNum; // teamA:0 , teamB:1
+    public boolean islandF;
 
     //생성자
     public Team(int n) {
@@ -24,6 +26,7 @@ public class Team {
         //yut[2] = 2; //todo remove: check end turn grouping
         //for(int i=0; i<yut.length; i++) yut[i] = 10; //todo remove: check movement
         //yut[0] = 100; //todo remove: check back-do movement
+        islandF = false;
     }
 
     /**
@@ -161,7 +164,18 @@ public class Team {
         }
     }
     //말 + 말 //return 44:실패, 45:성공
+    //말 + 말 //return 44:실패, 45:성공
     public int grouping0(char h1, char h2) {
+        //historyStack 동기화
+        if(h1 == moved) {
+            horse[h2 - 'a'].historyStack.clear();
+            horse[h2 - 'a'].historyStack.addAll(horse[h1 - 'a'].historyStack);
+        }
+        else {
+            horse[h1 - 'a'].historyStack.clear();
+            horse[h1 - 'a'].historyStack.addAll(horse[h2 - 'a'].historyStack);
+        }
+        //그룹핑
         if(groupA.isEmpty()) {
             groupA.add(horse[h1 - 'a']);
             groupA.add(horse[h2 - 'a']);
@@ -177,19 +191,66 @@ public class Team {
     //그룹 + 말
     public int grouping1(char g, char h){
         if(g == 'A') {
+            for (int i = 0; i < horse.length; i++) {
+                if (groupA.contains(horse[i])) {
+                    if(h == moved) {
+                        horse[i].historyStack.clear();
+                        horse[i].historyStack.addAll(horse[h-'a'].historyStack);
+                    }
+                    else {
+                        horse[h-'a'].historyStack.clear();
+                        horse[h-'a'].historyStack.addAll(horse[i].historyStack);
+                    }
+                }
+            }
             groupA.add(horse[h - 'a']);
             return 45;
         }
         else if(g == 'B') {
             groupB.add(horse[h - 'a']);
+            for (int i = 0; i < horse.length; i++) {
+                if (groupB.contains(horse[i])) {
+                    if(h == moved) {
+                        horse[i].historyStack.clear();
+                        horse[i].historyStack.addAll(horse[h-'a'].historyStack);
+                    }
+                    else {
+                        horse[h-'a'].historyStack.clear();
+                        horse[h-'a'].historyStack.addAll(horse[i].historyStack);
+                    }
+                }
+            }
             return 45;
         }
         else return 44;
     }
     //그룹 + 그룹
     public int grouping2(char g1, char g2) {
+        Stack<Pair<Integer, Integer>> tmpStack1 = new Stack<>();
+        Stack<Pair<Integer, Integer>> tmpStack2 = new Stack<>();
+        //tmpStack에 히스토리 저장
+        for (int i = 0; i < horse.length; i++) {
+            if (groupA.contains(horse[i])) {
+                tmpStack1.clear();
+                tmpStack1.addAll(horse[i].historyStack);
+            }
+            if (groupB.contains(horse[i])) {
+                tmpStack2.clear();
+                tmpStack2.addAll(horse[i].historyStack);
+            }
+        }
+        //grouping
         groupA.addAll(groupB);
         groupB.clear();
+        //Group A만 남으니까 A에 있는 말 동기화
+        for (int i = 0; i < horse.length; i++) {
+            if (groupA.contains(horse[i])) {
+                horse[i].historyStack.clear();
+                if (g1 == moved) horse[i].historyStack.addAll(tmpStack1);
+                else horse[i].historyStack.addAll(tmpStack2);
+            }
+        }
+
         return 45;
     }
 
@@ -202,7 +263,12 @@ public class Team {
         if(rollCnt < 1) return 31; //기회가 있는가
         prevYut = roll();
         //prevYut = 0; //todo remove: check end turn back-do
-        yut[prevYut]++;
+        if (islandF) {
+            if (prevYut == 3)   yut[prevYut]++;
+            islandF = false;
+            rollCnt = 0;
+            return 30;
+        } else                  yut[prevYut]++;
         if(prevYut == 4 | prevYut == 5) return 32;
         return 30;
     }

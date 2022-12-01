@@ -11,6 +11,7 @@ public class GameManager {
     boolean endTurn = false;
     boolean changeTurn = false;
     int[][] board;
+    boolean useIsland = false;
 
     /**
      * 생성자
@@ -88,7 +89,8 @@ public class GameManager {
             Team teamTmp = turn ? teamA : teamB;
             teamTmp.rollCnt = 1;
             teamTmp.prevYut = 5;
-            useLog = 0;
+            if (teamTmp.islandF)    useLog = 51;
+            else                    useLog = 0;
 
             endTurn = false;
             changeTurn = false;
@@ -221,6 +223,11 @@ public class GameManager {
                 //이동 실패하면 Pair<-1, -1>, 성공하면 이동한 후 좌표값
                 Pair<Integer, Integer> cur = tm.controller(op, h1, toMove, direction);
 
+                if(useIsland && cur.first == 3 && cur.second == 3) {
+                    tm.islandF = true;
+                    useLog = 50;
+                }
+
                 if(cur.first == -1) { //이동 실패
                     useLog = cur.second;
                     break;
@@ -251,6 +258,13 @@ public class GameManager {
                     default:
                         break;
                 }
+
+                // if (tm.islandF) -> endTurn = true
+                if (tm.islandF) {
+                    tm.rollCnt = 0;
+                    for (int i = 0; i < 6; i++) tm.yut[i] = 0;
+                }
+
                 break;
 
             case "roll":
@@ -312,13 +326,16 @@ public class GameManager {
             case 2:
             case 3:
             case 4:
-                teamA.horse[now-1] = new Horse(); break;
+                teamA.horse[now-1] = new Horse();
+                teamA.islandF = false;
+                break;
             case 5:
                 for(int i=0; i<teamA.horse.length; i++) {
                     if(teamA.groupA.contains(teamA.horse[i]))
                         teamA.horse[i] = new Horse();
                 }
                 teamA.groupA.clear();
+                teamA.islandF = false;
                 break;
             case 6:
                 for(int i=0; i<teamA.horse.length; i++) {
@@ -326,19 +343,23 @@ public class GameManager {
                         teamA.horse[i] = new Horse();
                 }
                 teamA.groupB.clear();
+                teamA.islandF = false;
                 break;
             //teamB
             case 11:
             case 12:
             case 13:
             case 14:
-                teamB.horse[now-11] = new Horse(); break;
+                teamB.horse[now-11] = new Horse();
+                teamB.islandF = false;
+                break;
             case 15:
                 for(int i=0; i<teamB.horse.length; i++) {
                     if(teamB.groupA.contains(teamB.horse[i]))
                         teamB.horse[i] = new Horse();
                 }
                 teamB.groupA.clear();
+                teamB.islandF = false;
                 break;
             case 16:
                 for(int i=0; i<teamB.horse.length; i++) {
@@ -346,6 +367,7 @@ public class GameManager {
                         teamB.horse[i] = new Horse();
                 }
                 teamB.groupB.clear();
+                teamB.islandF = false;
                 break;
         }
     }
@@ -390,6 +412,9 @@ public class GameManager {
             case 44: System.out.println("그룹핑 실패"); break;
             case 45: System.out.println("그룹핑 성공"); break;
             case 46: System.out.println("그룹핑 하지 않음"); break;
+            //무인도
+            case 50: System.out.println("무인도에 도착했습니다. 이번 턴에서는 더 이상 이동할 수 없습니다."); break;
+            case 51: System.out.println("걸이 나오면 무인도에서 탈출할 수 있습니다."); break;
 
             case 99: System.out.println("승리!!!");
                      System.out.println("엔터를 누르면 메뉴 화면으로 이동합니다.");break;

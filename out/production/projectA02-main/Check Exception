@@ -1,0 +1,179 @@
+////////////////////////////////<OBJECT>////////////////////////////////
+<GameManager>
+-main
+->GameManager
+->showMenu
+    ->parseInput
+
+-playGame
+->drawMap
+    ->map
+    ->printHorse
+->printSrc: add printYut
+->printLog: check Log number
+
+->checkCommand: parsing & check number of arguments
+    ->parseInput: parse to use String
+    ->move
+        <call controller>
+        ->checkHorse
+            ->canGroup
+            ->kill
+        ->Map marking
+    ->roll
+        <call controller>
+    ->group
+        <call controller>
+->isFinish
+
+-description -> need more
+-option -> not yet
+
+<Team>
+->controller(move): check input Horse
+    <call move>
+
+->controller(roll)
+    ->roll
+
+->controller(grouping)
+    ->grouping
+        ->H+H
+        ->H+G
+        ->G+G
+
+->checkIsEnd
+
+->printSrc
+->printYut
+->printSrc
+
+<Horse>
+-Horse
+->move : check direction match Horse
+    ->>pos
+        none start: <6,6>, stack.IsEmpty
+        vertex:
+        edge:
+        diagonal:
+        center:
+        do-back-do: <6,6>, stack.hasNext
+        endVertex: <6,6>, stack.hasNext
+        finish: <6,7> isEnd
+
+    ->>back-do
+        do-back-do:
+
+    ->>do
+    ->>gae
+    ->>gul
+    ->>yut
+    ->>mo
+
+>>> 오브젝 변동 많이 되었습니다.!!!
+
+////////////////////////////////<Condition>////////////////////////////////
+check command: 입력값에 대한 예외처리
+controller: [말이 존재하는가, 가능한 말인가, 기회가 존재하는가] 에 대한 예외처리
+move, grouping 등: 실제 행동
+
+useLog = 0일 때 canGroup = false가 적용됨
+
+////////////////////////////////<MSG>////////////////////////////////
+- 명령어를 입력하세요.
+- 올바르지 않은 입력입니다. [move | roll | grouping]
+- 가능한 행동이 없습니다. 엔터를 누르면 상대 턴으로 넘어갑니다.
+>>>move
+- 이동 실패
+- 이동 성공
+INPUT
+- 입력 값이 너무 많습니다. [move | m] [말 | 그룹] [이동칸수] [방향]
+- 말 또는 그룹을 입력하세요. [말: a, b, c, d] [그룹: A, B]
+- 이동 가능한 방향이 아닙니다. [1시: E, 4시: S, 7시: W, 10시: N]
+- 이동 가능한 거리가 아닙니다. [백도: 0, 도: 1, 개: 2, 걸: 3, 윷: 4, 모: 5]
+CHANCE
+- 이미 난 말입니다.
+- 백도를 할 수 없습니다. [출발하지 않은 말, 난 말]
+- 그룹에 속해 있는 말입니다.
+
+>>>group
+INPUT
+- 입력 값이 너무 많습니다 [grouping | g] [말 | 그룹] [말 | 그룹]
+- 그룹핑 가능합니다. 다른 행동을 하거나 엔터만 누르면 그룹핑 기회가 사라집니다.
+- 말 또는 그룹을 입력하세요. [말: a, b, c, d] [그룹: A, B]
+- 그룹에 속해 있는 말입니다.
+- 마지막으로 움직인 말이 아닙니다.
+- 그룹핑 가능한 위치가 아닙닌다.
+- 그룹핑 가능한 상태가 아닙니다.
+- 그룹핑 가능합니다. 엔터만 입력하면 상대턴으로 넘어갑니다.
+
+>>>roll
+INPUT
+- 입력 값이 너무 많습니다 [roll | r]
+- 던질 기회가 없습니다.
+- 한번 더 던질 수 있습니다.
+
+>>>kill
+-잡았습니다. 한번 더 던질 수 있습니다.
+
+
+////////////////////////////////<EXCEPTION>////////////////////////////////
+grouping :
+> 도착한 말끼리 확인:
+> 시작하지 않은 말끼리 확인:
+> 다른 방향에서 분기점에 도착했을 때 그룹화 되는지
+> 마지막 칸과 시작하지 않은 말 확인: 마지막칸에 도착
+> 업은 말 분리되는지: A 그룹에 속한 말 움직이기
+> 방금 이동한 말을 제외한 다른 말끼리 업어지는 지
+> 다른 명령어를 입력하면 chance를 잃게 되는지
+> 그룹이 정확하게 이루어지는지: 말말, 그룹말, 말그룹, 그룹그룹
+> 그룹화 하지 않은 말이 같은 위치에 있을 때 따로 따로 움직여야하고 하나가 움직이면 나머지는 남아있어야 함.
+> 이미 그룹핑한 말이 다시 그룹핑 되는지... 두 그룹에 모두 속하는 경우
+> 그룹이 나면 그룹 초기화 해줘야 함
+
+move :
+> 도 백도 백도: 말의 이동방향이 정확한지
+> 도 백도 else: 제대로 말이 나는지
+> 백도 x loop: 스택에 제대로 쌓이는지 확인
+> 백도로 분기점이상 이동: 분기점에서 방향을 바꾼 말에 대해 뒤로 가는지
+> 출발하지 않은 말 백도
+> 도착한 말 백도
+> 서로 다른 방향에서 접근하여 그룹화 된 말이 백도로 이동하는 좌표 확인...
+>
+
+> 분기점을 지나치기 N E W S C > 방향이 바뀔 수도 있으니 확인
+> 분기점에서 갈 수 없는 방향 지정
+> 분기점에서 방향 미지정
+> 난 말 이동이 불가
+> 도착한 곳에 말을 정확하게 인식하는지
+>
+
+kill
+> kill 이후 잡은 말과 잡힌 말 좌표 확인: 정상적으로 말이 초기화 되는지, 잡은 말이 맵에 남아있는지
+> 그룹화된 말이 정상적으로 초기화가 되는지
+> killing 후 rollCnt가 증가하는지
+>
+
+roll
+> 입력에 불필요한 요소가 있어도 roll하는지
+> 윷 현황이 정확하게 표현되는지
+> 윷가락이 정확하게 표현되는지
+> rollCnt가 0인데 던져지는지
+> 윷, 모가 나왔을 때 rollCnt가 증가하는지
+>
+
+input
+> 글자 수를 정확하게 인식하는지
+> parsing이 정확하게 이루어지는지
+> 시작전에 입력에 대한 예외처리가 잘 이루어 지는지 01 001 10
+>
+
+system
+> map 또는 log가 정확하게 찍히는지
+> 말 현황이 정확하게 표현되는지
+> 게임이 제대로 종료가 되는지
+> 턴이 제대로 넘어가는지: roll move 기회가 없고 grouping이 불가능할 때, 출발한 말이 없는데 백도일 때
+> 게임 종료 후 초기화면으로 넘어가는지.. > 여러번하고 정상적으로 종료되는지...
+> 각 메뉴로 넘어가는가
+
+> setting....
