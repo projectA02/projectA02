@@ -17,7 +17,7 @@ public class Horse {
         int y = position.first.intValue(), x = position.second.intValue();
         //난 말은 이동 불가
         if(y == 6 & x == 7) return 14;
-        /**
+        /*
          * check Vertex with Direction
          * */
         //분기점 => S E N W & C
@@ -25,7 +25,7 @@ public class Horse {
         else if (y == 3 & x == 3) isVertex = true;
         else isVertex = false;
 
-        /**
+        /*
          * Back-DO
          * */
         if (toMove == 0) {
@@ -115,7 +115,7 @@ public class Horse {
                 // W(o) - S(o)
                 else if (y == 6) { dy = 0; dx = 1; }
                 //대각선 이동
-                else if (y == 3 & x == 3) { } //Center는 가는 방향 그대로
+                else if (y == 3 & x == 3) {}//Center 는 가는 방향 그대로
                 // E(x) - C(x) - W(x)
                 else if (y + x == 6) { dy = 1; dx = -1; }
                 // N(x) - C(x) - S(x)
@@ -125,7 +125,7 @@ public class Horse {
              * Real move, 위에서는 방향만 잡아주고 여기서 실제로 움직임
              * */
             y += dy; x += dx;
-            //Center를 제외한 3일 때 건너뛴다.
+            //Center 를 제외한 3일 때 건너뛴다.
             if((y == 3 | x == 3) & !(y == 3 & x == 3)) {
                 y += dy; x += dx;
             }

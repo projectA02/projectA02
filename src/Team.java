@@ -20,12 +20,15 @@ public class Team {
         for(int i=0; i<horse.length; i++) horse[i] = new Horse();
         groupA = new HashSet<>();
         groupB = new HashSet<>();
-        isEnd = new boolean[4]; // 자동으로 false로 초기화 됩니다.
+        isEnd = new boolean[4]; // 자동으로 false 로 초기화 됩니다.
         rollCnt = 0;
         teamNum = n;
-        //yut[2] = 2; //todo remove: check end turn grouping
-        //for(int i=0; i<yut.length; i++) yut[i] = 10; //todo remove: check movement
-        //yut[0] = 100; //todo remove: check back-do movement
+        // yut[2] = 2;
+        // todo remove: check end turn grouping
+        //for(int i=0; i<yut.length; i++) yut[i] = 10;
+        // todo remove: check movement
+        //yut[0] = 100;
+        // todo remove: check back-do movement
     }
 
     /**
@@ -102,7 +105,7 @@ public class Team {
     /**
      * Grouping
      * */
-    //return: 11:그룹 속함, 12:마지막X, 13:말X, 14:난 말, 16:그룹X, 42:겹침X, 44:실패, 45:성공 47 : not useGrouping
+    //return: 11:그룹 속함, 12:마지막 X, 13:말X, 14:난 말, 16:그룹X, 42:겹침X, 44:실패, 45:성공 47 : not useGrouping
     public int controller(String command, char h1, char h2) { // grouping controller
         //기회가 있는가: 마지막에 움직인 말에 대해서만 그룹핑 가능
         if(moved != h1 & moved != h2) return 12;
@@ -121,7 +124,7 @@ public class Team {
             //기회가 있는가: 겹쳐진 말인가
             p1 = horse[h1 - 'a'].position;
             p2 = horse[h2 - 'a'].position;
-            if (p1.first == p2.first & p1.second == p2.second) return grouping0(h1, h2);
+            if (p1.first.equals(p2.first) & p1.second.equals(p2.second)) return grouping0(h1, h2);
             else return 42;
         }
         //case 2: group + group
@@ -136,7 +139,7 @@ public class Team {
                 if (groupB.contains(horse[i])) p2 = horse[i].position;
             }
             //기회가 있는가: 겹쳐져 있는가
-            if (p1.first == p2.first & p1.second == p2.second) return grouping2(h1, h2);
+            if (p1.first.equals(p2.first) & p1.second.equals(p2.second)) return grouping2(h1, h2);
             else return 42;
         }
         //case 1: group + horse
@@ -158,7 +161,7 @@ public class Team {
             }
             p2 = horse[h - 'a'].position;
 
-            if (p1.first == p2.first & p1.second == p2.second) return grouping1(g, h);
+            if (p1.first.equals(p2.first) & p1.second.equals(p2.second)) return grouping1(g, h);
             else return 42;
         }
     }
@@ -226,7 +229,7 @@ public class Team {
     public int grouping2(char g1, char g2) {
         Stack<Pair<Integer, Integer>> tmpStack1 = new Stack<>();
         Stack<Pair<Integer, Integer>> tmpStack2 = new Stack<>();
-        //tmpStack에 히스토리 저장
+        //tmpStack 에 히스토리 저장
         for (int i = 0; i < horse.length; i++) {
             if(groupA.contains(horse[i])) {
                 tmpStack1.clear();
@@ -248,14 +251,12 @@ public class Team {
                 else horse[i].historyStack.addAll(tmpStack2);
             }
         }
-
         return 45;
     }
 
-    /**
+    /*
      * Roll AND Yut
-     * https://keichee.tistory.com/312 -> ref
-     * */
+     */
     //return: 30:성공, 31:기회X, 32:한번더 34 : 낙
     public int controller(String command, boolean useFall) { // roll controller
         if(rollCnt < 1) return 31; //기회가 있는가
@@ -272,7 +273,7 @@ public class Team {
     }
     //윷가락을 던저 나온 값 반환
     public int roll(boolean useFall) {
-        int yut = 6;
+        int yut;
         // todo : useFall 해결
         if(useFall){ // 낙 허용
             int num = new Random().nextInt(10500);
@@ -337,61 +338,62 @@ public class Team {
     public void printYut(int yut) {
         switch (yut) {
             case 0: // 백도
-                System.out.println("" +
-                        "┌─┐ ┌─┐ ┌─┐ ┌─┐    \n" +
-                        "│X│ │X│ │X│ │ │    \n" +
-                        "│X│ │X│ │X│ │X│    \n" +
-                        "│X│ │X│ │X│ │ │    \n" +
-                        "└─┘ └─┘ └─┘ └─┘    ");
+                System.out.println("""
+                        ┌─┐ ┌─┐ ┌─┐ ┌─┐   \s
+                        │X│ │X│ │X│ │ │   \s
+                        │X│ │X│ │X│ │X│   \s
+                        │X│ │X│ │X│ │ │   \s
+                        └─┘ └─┘ └─┘ └─┘   \s""");
                 break;
             case 1: // 도
-                System.out.println("" +
-                        "┌─┐ ┌─┐ ┌─┐ ┌─┐    \n" +
-                        "│X│ │X│ │X│ │ │    \n" +
-                        "│X│ │X│ │X│ │ │    \n" +
-                        "│X│ │X│ │X│ │ │    \n" +
-                        "└─┘ └─┘ └─┘ └─┘    ");
+                System.out.println("""
+                        ┌─┐ ┌─┐ ┌─┐ ┌─┐   \s
+                        │X│ │X│ │X│ │ │   \s
+                        │X│ │X│ │X│ │ │   \s
+                        │X│ │X│ │X│ │ │   \s
+                        └─┘ └─┘ └─┘ └─┘   \s""");
                 break;
             case 2: // 개
-                System.out.println("" +
-                        "┌─┐ ┌─┐ ┌─┐ ┌─┐    \n" +
-                        "│X│ │X│ │ │ │ │    \n" +
-                        "│X│ │X│ │ │ │ │    \n" +
-                        "│X│ │X│ │ │ │ │    \n" +
-                        "└─┘ └─┘ └─┘ └─┘    ");
+                System.out.println("""
+                        ┌─┐ ┌─┐ ┌─┐ ┌─┐   \s
+                        │X│ │X│ │ │ │ │   \s
+                        │X│ │X│ │ │ │ │   \s
+                        │X│ │X│ │ │ │ │   \s
+                        └─┘ └─┘ └─┘ └─┘   \s""");
                 break;
             case 3: // 걸
-                System.out.println("" +
-                        "┌─┐ ┌─┐ ┌─┐ ┌─┐    \n" +
-                        "│X│ │ │ │ │ │ │    \n" +
-                        "│X│ │ │ │ │ │ │    \n" +
-                        "│X│ │ │ │ │ │ │    \n" +
-                        "└─┘ └─┘ └─┘ └─┘    ");
+                System.out.println("""
+                        ┌─┐ ┌─┐ ┌─┐ ┌─┐   \s
+                        │X│ │ │ │ │ │ │   \s
+                        │X│ │ │ │ │ │ │   \s
+                        │X│ │ │ │ │ │ │   \s
+                        └─┘ └─┘ └─┘ └─┘   \s""");
                 break;
             case 4: // 윷
-                System.out.println("" +
-                        "┌─┐ ┌─┐ ┌─┐ ┌─┐    \n" +
-                        "│ │ │ │ │ │ │ │    \n" +
-                        "│ │ │ │ │ │ │X│    \n" +
-                        "│ │ │ │ │ │ │ │    \n" +
-                        "└─┘ └─┘ └─┘ └─┘    ");
+                System.out.println("""
+                        ┌─┐ ┌─┐ ┌─┐ ┌─┐   \s
+                        │ │ │ │ │ │ │ │   \s
+                        │ │ │ │ │ │ │X│   \s
+                        │ │ │ │ │ │ │ │   \s
+                        └─┘ └─┘ └─┘ └─┘   \s""");
                 break;
             case 5: // 모
-                System.out.println("" +
-                        "┌─┐ ┌─┐ ┌─┐ ┌─┐    \n" +
-                        "│X│ │X│ │X│ │X│    \n" +
-                        "│X│ │X│ │X│ │X│    \n" +
-                        "│X│ │X│ │X│ │X│    \n" +
-                        "└─┘ └─┘ └─┘ └─┘    ");
+                System.out.println("""
+                        ┌─┐ ┌─┐ ┌─┐ ┌─┐   \s
+                        │X│ │X│ │X│ │X│   \s
+                        │X│ │X│ │X│ │X│   \s
+                        │X│ │X│ │X│ │X│   \s
+                        └─┘ └─┘ └─┘ └─┘   \s""");
                 break;
             default : // 낙
                 // todo : 낙 그림 넣기
-                System.out.println("" +
-                        "┌─┐ ┌─┐ ┌─┐     \n" +
-                        "│X│ │X│ │X│     \n" +
-                        "│X│ │X│ │X│     \n" +
-                        "│X│ │X│ │X│ ┌─────────┐ \n" +
-                        "└─┘ └─┘ └─┘ └─────────┘ \n");
+                System.out.println("""
+                        ┌─┐ ┌─┐ ┌─┐    \s
+                        │X│ │X│ │X│    \s
+                        │X│ │X│ │X│    \s
+                        │X│ │X│ │X│ ┌─────────┐\s
+                        └─┘ └─┘ └─┘ └─────────┘\s
+                        """);
         }
     }
     //모든 말이 나서 게임이 끝났는가
@@ -399,7 +401,7 @@ public class Team {
         for(boolean check : isEnd) if(!check) return false;
         return true;
     }
-    //턴이 끝났는가, canGroup은 GameManager에서 관리
+    //턴이 끝났는가, canGroup 은 GameManager 에서 관리
     public boolean isTurnEnd() {
         if(rollCnt > 0) return false;   //윷가락 던질 기회 남았을 때
 
