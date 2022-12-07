@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GameManager {
     Scanner sc = new Scanner(System.in);
@@ -6,6 +8,9 @@ public class GameManager {
     Team teamB;
     boolean isEnd;
     int useLog;
+    boolean useFall;
+    boolean useIsland;
+    boolean useGroup;
     private boolean turn; // True : A 팀, false : B 팀
     boolean canGroup = false;
     boolean endTurn = false;
@@ -19,6 +24,9 @@ public class GameManager {
     GameManager() {
         boolean prog = true; //프로그램을 계속 진행할 것인가
         boolean menu = true; //올바른 명령어를 입력했는가
+        useFall = false;
+        useIsland = false;
+        useGroup = true;
         while(prog) {
             String[] cmd = parseInput(showMenu(menu));
             //띄어쓰기를 통해 2단어 이상 입력시 예외: 불필요한 입력
@@ -98,17 +106,6 @@ public class GameManager {
                 drawMap();
                 teamTmp.printSrc();
 
-                /* todo remove: check position
-                System.out.println("팀 A 말 위치 현황");
-                for (int i = 0; i < 4; i++) {
-                    System.out.print(i + 1 + "번 말 : (" + teamA.horse[i].position.first + " ," + teamA.horse[i].position.second + ")");
-                }
-                System.out.println("\n팀 B 말 위치 현황");
-                for (int i = 0; i < 4; i++) {
-                    System.out.print(i + 1 + "번 말 : (" + teamB.horse[i].position.first + " ," + teamB.horse[i].position.second + ")");
-                }
-                System.out.println(); */
-
 
                 //Log 출력과 입력 받기
                 printLog(turn, useLog);
@@ -154,7 +151,7 @@ public class GameManager {
         //각 팀 별로 윷판 갱신
         teamA.marking(board);
         teamB.marking(board);
-        //윷판 출력 <<○ㅤ①②③④ⒶⒷ❶❷➌➍🅐🅑>>
+        //윷판 출력 <<○ㅤ①②③④ⒶⒷ❶❷➌➍🅐🅑 >>
         for (int i = 0; i < 20; i++) System.out.println();
         if(turn) System.out.println("< A팀 턴 >");
         else System.out.println("< B팀 턴 >");
@@ -244,7 +241,7 @@ public class GameManager {
                         useLog = 40;
                         break;
                     case 2: //적군: 무조건 잡음
-                        kill(now_y, now_x);
+                        kill(turn,now_y, now_x);
                         useLog = 33;
                         tm.rollCnt++;   //잡으면 기회 증가
                         break;
@@ -257,19 +254,22 @@ public class GameManager {
             case "r":
                 //명령어 제외 불필요한 값 입력 시 예외
                 if(cmd[4].length() > 1) return 3;
-                useLog = tm.controller(op);
+                useLog = tm.controller(op,useFall);
                 if(useLog == 30 | useLog == 32) canGroup = false;
                 break;
 
             case "grouping":
             case "g":
-                if(!canGroup) return 43; //그룹이 불가능 하면 예외
-
+                if(!canGroup) return 43; //그룹이 불가능 하면 예외 -> not grouping
+                if(!useGroup) {
+                    canGroup = false;
+                    return 47; // use Grouping inactive
+                }
                 //입력을 잘 못 했을 때
                 if(cmd[4].length() != 3) return 4;
                 h1 = cmd[1].charAt(0);
                 h2 = cmd[2].charAt(0);
-
+                // grouping controller
                 useLog = tm.controller(op, h1, h2);
                 if(useLog == 45) canGroup = false;
                 break;
@@ -282,7 +282,7 @@ public class GameManager {
                     return 0;
                 }
                 else if(canGroup) { //grouping만 취소할 때
-                    return  46;
+                    return 46;
                 }
             default:
                 return 1;
@@ -292,62 +292,81 @@ public class GameManager {
 
     //return 아군:1, 적군:2
     public int checkHorse(boolean turn, int y, int x) {
+        // true : A , false : B
         if(y == 6 & x == 7) return 0; //난 말입니다.
+        // y 랑 x 도착한 말의 좌표
+        int now = board[y][x]; //
 
-        int now = board[y][x];
         if(now == 1 || now == 2 || now == 3 || now == 4 || now == 5 || now == 6) {
-            return turn ? 1 : 2;
+            if(!useGroup)
+                return turn ? 0 : 2;
+            else return turn ? 1 : 2;
         }
         else if(now == 11 || now == 12 || now == 13 || now == 14 || now == 15 || now == 16) {
-            return turn ? 2 : 1;
+            if(!useGroup)
+                return turn ? 2 : 0;
+            else return turn ? 2 : 1;
         }
-        return 0;
+
+        return 0; // 0 이면 안겹치는 걸로 인식
     }
     //맵 갱신은 drawMap에서 진행
-    public void kill(int y, int x) {
-        int now = board[y][x];
-        switch (now) {
-            //teamA
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                teamA.horse[now-1] = new Horse(); break;
-            case 5:
-                for(int i=0; i<teamA.horse.length; i++) {
-                    if(teamA.groupA.contains(teamA.horse[i]))
-                        teamA.horse[i] = new Horse();
-                }
-                teamA.groupA.clear();
-                break;
-            case 6:
-                for(int i=0; i<teamA.horse.length; i++) {
-                    if(teamA.groupB.contains(teamA.horse[i]))
-                        teamA.horse[i] = new Horse();
-                }
-                teamA.groupB.clear();
-                break;
-            //teamB
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-                teamB.horse[now-11] = new Horse(); break;
-            case 15:
-                for(int i=0; i<teamB.horse.length; i++) {
-                    if(teamB.groupA.contains(teamB.horse[i]))
-                        teamB.horse[i] = new Horse();
-                }
-                teamB.groupA.clear();
-                break;
-            case 16:
-                for(int i=0; i<teamB.horse.length; i++) {
-                    if(teamB.groupB.contains(teamB.horse[i]))
-                        teamB.horse[i] = new Horse();
-                }
-                teamB.groupB.clear();
-                break;
+    public void kill(boolean turn, int y, int x) { // y,x 는 현재 위치
+        //int now = board[y][x];
+        for(int i = 0 ;i<4; i++){
+            if(turn && teamB.horse[i].position.first.intValue() == y && teamB.horse[i].position.second.intValue()== x){
+                if(teamB.groupA.contains(teamB.horse[i]))  teamB.groupA.clear();
+                if(teamB.groupB.contains(teamB.horse[i]))  teamB.groupB.clear();
+                    teamB.horse[i] =new Horse();
+            }else if(!turn && teamA.horse[i].position.first.intValue() == y && teamA.horse[i].position.second.intValue()== x) {
+                if(teamA.groupA.contains(teamA.horse[i]))  teamA.groupA.clear();
+                if(teamA.groupB.contains(teamA.horse[i]))  teamA.groupB.clear();
+                    teamA.horse[i] =new Horse();
+            }
         }
+        // 올라가 있는 말을 찾아서 죽이기
+//        switch (now) {
+//            //teamA
+//            case 1:
+//            case 2:
+//            case 3:
+//            case 4:
+//                teamA.horse[now-1] = new Horse(); break;
+//            case 5:
+//                for(int i=0; i<teamA.horse.length; i++) { //group
+//                    if(teamA.groupA.contains(teamA.horse[i]))
+//                        teamA.horse[i] = new Horse();
+//                }
+//                teamA.groupA.clear();
+//                break;
+//            case 6:
+//                for(int i=0; i<teamA.horse.length; i++) {
+//                    if(teamA.groupB.contains(teamA.horse[i]))
+//                        teamA.horse[i] = new Horse();
+//                }
+//                teamA.groupB.clear();
+//                break;
+//            //teamB
+//            case 11:
+//            case 12:
+//            case 13:
+//            case 14:
+//                teamB.horse[now-11] = new Horse(); break;
+//            case 15:
+//                for(int i=0; i<teamB.horse.length; i++) {
+//                    if(teamB.groupA.contains(teamB.horse[i]))
+//                        teamB.horse[i] = new Horse();
+//                }
+//                teamB.groupA.clear();
+//                break;
+//            case 16:
+//                for(int i=0; i<teamB.horse.length; i++) {
+//                    if(teamB.groupB.contains(teamB.horse[i]))
+//                        teamB.horse[i] = new Horse();
+//                }
+//                teamB.groupB.clear();
+//                break;
+//        }
     }
 
     //todo 로그 보강
@@ -382,7 +401,9 @@ public class GameManager {
             case 31: System.out.println("던질 기회가 없습니다."); break;
             case 32: System.out.println("한번 더 던질 수 있습니다."); break;
             case 33: System.out.println("잡았습니다. 한번 더 던질 수 있습니다."); break;
+            case 34: System.out.println("낙입니다."); break;
             //grouping에 관한
+
             case 40: System.out.println("그룹핑 가능합니다. 다른 행동을 하거나 엔터만 누르면 그룹핑 기회가 사라집니다."); break;
             case 41: System.out.println("그룹핑 가능합니다. 엔터만 입력하면 상대턴으로 넘어갑니다."); break;
             case 42: System.out.println("그룹핑 가능한 위치가 아닙니다."); break;
@@ -390,6 +411,7 @@ public class GameManager {
             case 44: System.out.println("그룹핑 실패"); break;
             case 45: System.out.println("그룹핑 성공"); break;
             case 46: System.out.println("그룹핑 하지 않음"); break;
+            case 47: System.out.println("그룹핑 기능이 없습니다. "); break;
 
             case 99: System.out.println("승리!!!");
                      System.out.println("엔터를 누르면 메뉴 화면으로 이동합니다.");break;
@@ -404,7 +426,7 @@ public class GameManager {
     //설명문 => 설정창 => 엔터 입력으로 메뉴로 이동
     public void description() {
         for(int i=0; i<50; i++) System.out.println();
-        System.out.println("게임은 A, B팀으로 진행된다. 각 팀 당 말 4개(a, b, c, d)를 가지고 있으며 이 말들이 모두 먼저 난 팀이 승리한다.\n" +
+        System.out.println("게임은 A,B 팀으로 진행된다. 각 팀 당 말 4개(a, b, c, d)를 가지고 있으며 이 말들이 모두 먼저 난 팀이 승리한다.\n" +
                 "방위는 시작 점 기준으로 시작점은 S, 시작점의 대각선 위쪽은 N, 시작점의 위쪽은 E, 시작점의 오른쪽은 W이다.\n" +
                 "윷가락 던지기,움직이기, 그룹핑 하기는 명령어로 입력되며 각 명령어의 형식은 아래와 같다.\n\n" +
                 "던지기: roll 또는 r \n" +
@@ -414,18 +436,56 @@ public class GameManager {
                 "윷이나 모가 나오면 추가로 윷가락을 던질 수 있고, 이동 후 다른 팀의 말을 잡을 때도 한 번 더 던질 수 있다.\n" +
                 "만약 첫 '도' 위치에서 백도가 나오면 결승점(시작점)으로 이동하고, 결승점(시작점)에서 백도가 한번 더 나올 경우" +
                 "W방위 쪽으로 한 칸 이동한다.\n");
-
         setting();
         System.out.println("Press Enter to Quit");
         sc.nextLine(); //Enter 입력을 기다림.
     }
 
+    /**
+     * [setting]
+     * useFall,useIsland,useGroup
+     * */
     public void setting() {
-        //??
+        //todo : setting 구현
+        String regex = "[YNyn]"; // 정규 표현식
+        String str;
+        while(true) {
+            // fall
+            System.out.println("낙 기능을 적용하시겠습니까?(Y/N) : ");
+            str = sc.nextLine();
+            if (matches(regex, str)) {
+                useFall = str == "Y" || str == "y" ? true : false;
+                System.out.println("적용되었습니다.");
+                break;
+            } else System.out.println("잘못된 값을 입력했습니다. 다시 입력해주세요 ");
+        }
+        while(true){
+            // island
+            System.out.println("무인도 기능을 적용하시겠습니까?(Y/N) : ");
+            str = sc.nextLine();
+            if(matches(regex,str)){
+                useIsland = str=="Y" || str == "y" ? true : false;
+                System.out.println("적용되었습니다."); break;
+            }else System.out.println("잘못된 값을 입력했습니다. 다시 입력해주세요 ");
+        }
+        while(true){
+            // Grouping
+            System.out.println("그룹핑 기능을 적용하시겠습니까?(Y/N) : ");
+            sc.nextLine();
+            if(matches(regex,str)){
+                useGroup = str=="Y" || str == "y" ? true : false;
+                System.out.println("적용되었습니다."); break;
+            }else System.out.println("잘못된 값을 입력했습니다. 다시 입력해주세요 ");
+        }
+        System.out.println("설정 끝났습니다.");
+    }
+    public boolean matches(String reg,CharSequence input){
+        Pattern p = Pattern.compile(reg);
+        Matcher m = p.matcher(input);
+        return m.matches();
     }
 
     //todo remove: too much comment > 이해완료 했으면 필요 이상의 주석은 제거하세요...
     public static void main(String[] args) {
-        GameManager Gm = new GameManager();
-    }
+        GameManager Gm = new GameManager();}
 }

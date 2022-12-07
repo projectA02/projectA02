@@ -121,7 +121,6 @@ public class Horse {
                 // N(x) - C(x) - S(x)
                 else if (y == x) { dy = 1; dx = 1; }
             }
-
             /**
              * Real move, 위에서는 방향만 잡아주고 여기서 실제로 움직임
              * */

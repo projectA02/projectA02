@@ -1,5 +1,7 @@
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Stack;
 
 public class Team {
     public Horse[] horse;
@@ -31,7 +33,7 @@ public class Team {
      * */
     //움직여서 도착한 위치 반환, log 필요시 수정(first: -1 고정, second: log 처리 값)
     //return 11:그룹속함, 13:말X, 14:난 말, 16:그룹X, 21:실패, 22:거리이슈, 24:횟수이슈
-    public Pair controller(String command, char h, int toMove, char direction) {
+    public Pair controller(String command, char h, int toMove, char direction) { // move controller
         Pair<Integer, Integer> res = new Pair<>(-1, 21);
 
         if(toMove > 5 | toMove < 0) return new Pair(-1, 22); //불가능한 이동인가
@@ -100,8 +102,8 @@ public class Team {
     /**
      * Grouping
      * */
-    //return: 11:그룹 속함, 12:마지막X, 13:말X, 14:난 말, 16:그룹X, 42:겹침X, 44:실패, 45:성공
-    public int controller(String command, char h1, char h2) {
+    //return: 11:그룹 속함, 12:마지막X, 13:말X, 14:난 말, 16:그룹X, 42:겹침X, 44:실패, 45:성공 47 : not useGrouping
+    public int controller(String command, char h1, char h2) { // grouping controller
         //기회가 있는가: 마지막에 움직인 말에 대해서만 그룹핑 가능
         if(moved != h1 & moved != h2) return 12;
 
@@ -162,6 +164,16 @@ public class Team {
     }
     //말 + 말 //return 44:실패, 45:성공
     public int grouping0(char h1, char h2) {
+        //historyStack 동기화
+        if(h1 == moved) {
+            horse[h2 - 'a'].historyStack.clear();
+            horse[h2 - 'a'].historyStack.addAll(horse[h1 - 'a'].historyStack);
+        }
+        else {
+            horse[h1 - 'a'].historyStack.clear();
+            horse[h1 - 'a'].historyStack.addAll(horse[h2 - 'a'].historyStack);
+        }
+        //그룹핑
         if(groupA.isEmpty()) {
             groupA.add(horse[h1 - 'a']);
             groupA.add(horse[h2 - 'a']);
@@ -177,19 +189,66 @@ public class Team {
     //그룹 + 말
     public int grouping1(char g, char h){
         if(g == 'A') {
+            for (int i = 0; i < horse.length; i++) {
+                if (groupA.contains(horse[i])) {
+                    if(h == moved) {
+                        horse[i].historyStack.clear();
+                        horse[i].historyStack.addAll(horse[h-'a'].historyStack);
+                    }
+                    else {
+                        horse[h-'a'].historyStack.clear();
+                        horse[h-'a'].historyStack.addAll(horse[i].historyStack);
+                    }
+                }
+            }
             groupA.add(horse[h - 'a']);
             return 45;
         }
         else if(g == 'B') {
             groupB.add(horse[h - 'a']);
+            for (int i = 0; i < horse.length; i++) {
+                if (groupB.contains(horse[i])) {
+                    if(h == moved) {
+                        horse[i].historyStack.clear();
+                        horse[i].historyStack.addAll(horse[h-'a'].historyStack);
+                    }
+                    else {
+                        horse[h-'a'].historyStack.clear();
+                        horse[h-'a'].historyStack.addAll(horse[i].historyStack);
+                    }
+                }
+            }
             return 45;
         }
         else return 44;
     }
     //그룹 + 그룹
     public int grouping2(char g1, char g2) {
+        Stack<Pair<Integer, Integer>> tmpStack1 = new Stack<>();
+        Stack<Pair<Integer, Integer>> tmpStack2 = new Stack<>();
+        //tmpStack에 히스토리 저장
+        for (int i = 0; i < horse.length; i++) {
+            if(groupA.contains(horse[i])) {
+                tmpStack1.clear();
+                tmpStack1.addAll(horse[i].historyStack);
+            }
+            if(groupB.contains(horse[i])) {
+                tmpStack2.clear();
+                tmpStack2.addAll(horse[i].historyStack);
+            }
+        }
+        //grouping
         groupA.addAll(groupB);
         groupB.clear();
+        //Group A만 남으니까 A에 있는 말 동기화
+        for (int i = 0; i < horse.length; i++) {
+            if(groupA.contains(horse[i])) {
+                horse[i].historyStack.clear();
+                if(g1 == moved) horse[i].historyStack.addAll(tmpStack1);
+                else horse[i].historyStack.addAll(tmpStack2);
+            }
+        }
+
         return 45;
     }
 
@@ -197,28 +256,44 @@ public class Team {
      * Roll AND Yut
      * https://keichee.tistory.com/312 -> ref
      * */
-    //return: 30:성공, 31:기회X, 32:한번더
-    public int controller(String command) {
+    //return: 30:성공, 31:기회X, 32:한번더 34 : 낙
+    public int controller(String command, boolean useFall) { // roll controller
         if(rollCnt < 1) return 31; //기회가 있는가
-        prevYut = roll();
+        prevYut = roll(useFall);
         //prevYut = 0; //todo remove: check end turn back-do
+        if (prevYut == 6 ) {
+            rollCnt = 0; // roll cnt 초기화
+            Arrays.fill(yut,0); // yut 배열 0 으로 초기화
+            return 34; //
+        }
         yut[prevYut]++;
         if(prevYut == 4 | prevYut == 5) return 32;
         return 30;
     }
     //윷가락을 던저 나온 값 반환
-    public int roll() {
-        int yut;
-        int num = new Random().nextInt(10000);
-
-        rollCnt--;
-        if(num < 625) yut = 0;
-        else if(num < 625 + 1875) yut = 1;
-        else if(num < 625 + 1875 + 3750) yut = 2;
-        else if(num < 625 + 1875 + 3750 + 2500) yut = 3;
-        else if(num < 625 + 1875 + 3750 + 2500 + 625) yut = 4;
-        else yut = 5;
-
+    public int roll(boolean useFall) {
+        int yut = 6;
+        // todo : useFall 해결
+        if(useFall){ // 낙 허용
+            int num = new Random().nextInt(10500);
+            rollCnt--;
+            if(num < 625) yut = 0; // 백도
+            else if(num < 625 + 1875) yut = 1; // 도
+            else if(num < 625 + 1875 + 3750) yut = 2; // 개
+            else if(num < 625 + 1875 + 3750 + 2500) yut = 3; // 걸
+            else if(num < 625 + 1875 + 3750 + 2500 + 625) yut = 4; // 윷
+            else if(num < 625 + 1875 + 3750 + 2500 + 625 + 625) yut = 5; // 모
+            else yut = 6;  // 낙
+        }else{
+            int num = new Random().nextInt(10000);
+            rollCnt--;
+            if(num < 625) yut = 0; // 백도
+            else if(num < 625 + 1875) yut = 1; // 도
+            else if(num < 625 + 1875 + 3750) yut = 2; // 개
+            else if(num < 625 + 1875 + 3750 + 2500) yut = 3; // 걸
+            else if(num < 625 + 1875 + 3750 + 2500 + 625) yut = 4; // 윷
+            else yut = 5; // 모
+        }
         if(yut == 4 | yut == 5) rollCnt++;
 
         return yut;
@@ -309,6 +384,14 @@ public class Team {
                         "│X│ │X│ │X│ │X│    \n" +
                         "└─┘ └─┘ └─┘ └─┘    ");
                 break;
+            default : // 낙
+                // todo : 낙 그림 넣기
+                System.out.println("" +
+                        "┌─┐ ┌─┐ ┌─┐     \n" +
+                        "│X│ │X│ │X│     \n" +
+                        "│X│ │X│ │X│     \n" +
+                        "│X│ │X│ │X│ ┌─────────┐ \n" +
+                        "└─┘ └─┘ └─┘ └─────────┘ \n");
         }
     }
     //모든 말이 나서 게임이 끝났는가
