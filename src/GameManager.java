@@ -166,8 +166,10 @@ public class GameManager {
         teamB.marking(board);
         //윷판 출력 <<○ㅤ①②③④ⒶⒷ❶❷➌➍🅐🅑>>
         for (int i = 0; i < 20; i++) System.out.println();
+        System.out.println("낙: " + useFall + ", 무인도: " + useIsland + ", 그룹핑: " + useGroup);
         if(turn) System.out.println("< A팀 턴 >");
         else System.out.println("< B팀 턴 >");
+
         for (int i = 0; i <= 6; i++) {
             for (int j = 0; j <= 6; j++) {
                 switch (board[i][j]) {
@@ -349,8 +351,11 @@ public class GameManager {
                 teamA.horse[i] =new Horse();
             }
         }
-        if(turn) teamB.islandF = false;
-        else teamA.islandF = false;
+        if(y == 3 && x ==3 ){
+            if(turn) teamB.islandF = false;
+            else teamA.islandF = false;
+        }
+
         // 올라가 있는 말을 찾아서 죽이기
 //        switch (now) {
 //            //teamA
@@ -484,7 +489,7 @@ public class GameManager {
         String str;
         while(true) {
             // fall
-            System.out.println("낙 기능을 적용하시겠습니까?(Y/N) : ");
+            System.out.print("낙 기능을 적용하시겠습니까?(Y/N) : ");
             str = sc.nextLine();
             if (matches(regex, str)) {
                 useFall = str.equals("Y") || str.equals("y");
@@ -494,7 +499,7 @@ public class GameManager {
         }
         while(true){
             // island
-            System.out.println("무인도 기능을 적용하시겠습니까?(Y/N) : ");
+            System.out.print("무인도 기능을 적용하시겠습니까?(Y/N) : ");
             str = sc.nextLine();
             if(matches(regex,str)){
                 useIsland = str.equals("Y") || str.equals("y");
@@ -503,8 +508,8 @@ public class GameManager {
         }
         while(true){
             // Grouping
-            System.out.println("그룹핑 기능을 적용하시겠습니까?(Y/N) : ");
-            sc.nextLine();
+            System.out.print("그룹핑 기능을 적용하시겠습니까?(Y/N) : ");
+            str = sc.nextLine();
             if(matches(regex,str)){
                 useGroup = str.equals("Y") || str.equals("y");
                 System.out.println("적용되었습니다."); break;

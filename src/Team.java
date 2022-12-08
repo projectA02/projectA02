@@ -259,7 +259,7 @@ public class Team {
      * https://keichee.tistory.com/312 -> ref
      * */
     //return: 30:성공, 31:기회X, 32:한번더
-    public int controller(String command) {
+    public int controller(String command,boolean useFall) {
         if(rollCnt < 1) return 31; //기회가 있는가
         prevYut = roll(useFall);
         //prevYut = 0; //todo remove: check end turn back-do
