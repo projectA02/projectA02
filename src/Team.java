@@ -13,6 +13,7 @@ public class Team {
     public int rollCnt; // roll 던질 수 있는 횟수
     public int prevYut; //직전에 던진 윷 저장
     public int teamNum; // teamA:0 , teamB:1
+    public boolean islandF;
 
     //생성자
     public Team(int n) {
@@ -23,12 +24,10 @@ public class Team {
         isEnd = new boolean[4]; // 자동으로 false 로 초기화 됩니다.
         rollCnt = 0;
         teamNum = n;
-        // yut[2] = 2;
-        // todo remove: check end turn grouping
-        //for(int i=0; i<yut.length; i++) yut[i] = 10;
-        // todo remove: check movement
-        //yut[0] = 100;
-        // todo remove: check back-do movement
+        //yut[2] = 2; //todo remove: check end turn grouping
+        //for(int i=0; i<yut.length; i++) yut[i] = 10; //todo remove: check movement
+        //yut[0] = 100; //todo remove: check back-do movement
+        islandF = false;
     }
 
     /**
@@ -165,6 +164,7 @@ public class Team {
             else return 42;
         }
     }
+
     //말 + 말 //return 44:실패, 45:성공
     public int grouping0(char h1, char h2) {
         //historyStack 동기화
@@ -254,11 +254,12 @@ public class Team {
         return 45;
     }
 
-    /*
+    /**
      * Roll AND Yut
-     */
-    //return: 30:성공, 31:기회X, 32:한번더 34 : 낙
-    public int controller(String command, boolean useFall) { // roll controller
+     * https://keichee.tistory.com/312 -> ref
+     * */
+    //return: 30:성공, 31:기회X, 32:한번더
+    public int controller(String command) {
         if(rollCnt < 1) return 31; //기회가 있는가
         prevYut = roll(useFall);
         //prevYut = 0; //todo remove: check end turn back-do
@@ -267,7 +268,14 @@ public class Team {
             Arrays.fill(yut,0); // yut 배열 0 으로 초기화
             return 34; //
         }
-        yut[prevYut]++;
+       // yut[prevYut]++;
+
+        if (islandF) {
+            if (prevYut == 3)   yut[prevYut]++;
+            islandF = false;
+            rollCnt = 0;
+            return 30;
+        } else                  yut[prevYut]++;
         if(prevYut == 4 | prevYut == 5) return 32;
         return 30;
     }
@@ -386,7 +394,6 @@ public class Team {
                         └─┘ └─┘ └─┘ └─┘   \s""");
                 break;
             default : // 낙
-                // todo : 낙 그림 넣기
                 System.out.println("""
                         ┌─┐ ┌─┐ ┌─┐    \s
                         │X│ │X│ │X│    \s

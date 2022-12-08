@@ -97,6 +97,8 @@ public class GameManager {
             teamTmp.rollCnt = 1;
             teamTmp.prevYut = 5;
             useLog = 0;
+            if (teamTmp.islandF)    useLog = 51;
+            else                    useLog = 0;
 
             endTurn = false;
             changeTurn = false;
@@ -105,6 +107,17 @@ public class GameManager {
                 //맵, 현황 등 출력
                 drawMap();
                 teamTmp.printSrc();
+
+                /* todo remove: check position
+                System.out.println("팀 A 말 위치 현황");
+                for (int i = 0; i < 4; i++) {
+                    System.out.print(i + 1 + "번 말 : (" + teamA.horse[i].position.first + " ," + teamA.horse[i].position.second + ")");
+                }
+                System.out.println("\n팀 B 말 위치 현황");
+                for (int i = 0; i < 4; i++) {
+                    System.out.print(i + 1 + "번 말 : (" + teamB.horse[i].position.first + " ," + teamB.horse[i].position.second + ")");
+                }
+                System.out.println(); */
 
 
                 //Log 출력과 입력 받기
@@ -151,7 +164,7 @@ public class GameManager {
         //각 팀 별로 윷판 갱신
         teamA.marking(board);
         teamB.marking(board);
-        //윷판 출력 <<○ㅤ①②③④ⒶⒷ❶❷➌➍🅐🅑 >>
+        //윷판 출력 <<○ㅤ①②③④ⒶⒷ❶❷➌➍🅐🅑>>
         for (int i = 0; i < 20; i++) System.out.println();
         if(turn) System.out.println("< A팀 턴 >");
         else System.out.println("< B팀 턴 >");
@@ -206,9 +219,9 @@ public class GameManager {
             //말 이동
             case "move":
             case "m":
-                //입력을 잘 못 했을 때: op 제외 2~3개 값 입력: [h|g] [toMove] <direction>
+                //입력을 잘 못 했을 때: op제외 2~3개 값 입력: [h|g] [toMove] <direction>
                 if(cmd[4].length() != 3 & cmd[4].length() != 4) return 2;
-                //toMove 가 숫자가 아닐 경우 예외, 입력값 2개일 때 direction = "$"
+                //toMove가 숫자가 아닐 경우 예외, 입력값 2개일 때 direction = "$"
                 h1 = cmd[1].charAt(0);
                 if(Character.isDigit(cmd[2].charAt(0)))
                     toMove = Character.getNumericValue(cmd[2].charAt(0));
@@ -217,6 +230,11 @@ public class GameManager {
 
                 //이동 실패하면 Pair<-1, -1>, 성공하면 이동한 후 좌표값
                 Pair<Integer, Integer> cur = tm.controller(op, h1, toMove, direction);
+
+                if(useIsland && cur.first == 3 && cur.second == 3) {
+                    tm.islandF = true;
+                    useLog = 50;
+                }
 
                 if(cur.first == -1) { //이동 실패
                     useLog = cur.second;
@@ -248,6 +266,13 @@ public class GameManager {
                     default:
                         break;
                 }
+
+                // if (tm.islandF) -> endTurn = true
+                if (tm.islandF) {
+                    tm.rollCnt = 0;
+                    for (int i = 0; i < 6; i++) tm.yut[i] = 0;
+                }
+
                 break;
 
             case "roll":
@@ -295,7 +320,7 @@ public class GameManager {
         // true : A , false : B
         if(y == 6 & x == 7) return 0; //난 말입니다.
         // y 랑 x 도착한 말의 좌표
-        int now = board[y][x]; //
+        int now = board[y][x];
 
         if(now == 1 || now == 2 || now == 3 || now == 4 || now == 5 || now == 6) {
             if(!useGroup)
@@ -324,6 +349,8 @@ public class GameManager {
                 teamA.horse[i] =new Horse();
             }
         }
+        if(turn) teamB.islandF = false;
+        else teamA.islandF = false;
         // 올라가 있는 말을 찾아서 죽이기
 //        switch (now) {
 //            //teamA
@@ -389,14 +416,14 @@ public class GameManager {
             case 14: System.out.println("난 말입니다."); break;
             case 15: System.out.println("출발하지 않은 말입니다."); break;
             case 16: System.out.println("존재하지 않는 그룹입니다."); break;
-            //move 에 관한
+            //move에 관한
             case 20: System.out.println("이동 성공"); break;
             case 21: System.out.println("이동 실패"); break;
             case 22: System.out.println("이동 가능한 거리가 아닙니다.[백도: 0, 도: 1, 개: 2, 걸: 3, 윷: 4, 모: 5"); break;
             case 23: System.out.println("이동 가능한 방향이 아닙니다.[1시: E, 4시: S, 7시: W, 10시: N]"); break;
             case 24: System.out.println("이동 횟수가 부족합니다."); break;
             case 25: System.out.println("백도를 이동할 말이 존재하지 않습니다. 엔터만 입력하면 상대턴으로 넘어갑니다"); break;
-            //roll 에 관한
+            //roll에 관한
             case 30: System.out.println("던지기 성공"); break;
             case 31: System.out.println("던질 기회가 없습니다."); break;
             case 32: System.out.println("한번 더 던질 수 있습니다."); break;
@@ -412,6 +439,9 @@ public class GameManager {
             case 45: System.out.println("그룹핑 성공"); break;
             case 46: System.out.println("그룹핑 하지 않음"); break;
             case 47: System.out.println("그룹핑 기능이 없습니다. "); break;
+            //무인도
+            case 50: System.out.println("무인도에 도착했습니다. 이번 턴에서는 더 이상 이동할 수 없습니다."); break;
+            case 51: System.out.println("걸이 나오면 무인도에서 탈출할 수 있습니다."); break;
 
             case 99: System.out.println("승리!!!");
                      System.out.println("엔터를 누르면 메뉴 화면으로 이동합니다.");break;
